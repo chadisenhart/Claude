@@ -214,7 +214,7 @@ export function Progress() {
   )
 }
 
-function buildWeeklyData(workouts: typeof [] extends never[] ? any[] : any[], range: Range) {
+function buildWeeklyData(workouts: any[], range: Range) {
   const weeks = range === '2W' ? 2 : range === '4W' ? 4 : 8
   return Array.from({ length: weeks }, (_, i) => {
     const wStart = startOfWeek(subWeeks(new Date(), weeks - 1 - i), { weekStartsOn: 1 })

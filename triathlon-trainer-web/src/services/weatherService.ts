@@ -108,7 +108,8 @@ export function assessWeather(
     maxRisk('extreme')
   }
 
-  const indoorRecommended = risk === 'extreme' || risk === 'high'
+  const finalRisk = risk as RiskLevel
+  const indoorRecommended = finalRisk === 'extreme' || finalRisk === 'high'
   const intensityAdjustment = conditions.feelsLike > 27 ? 'Reduce target pace/power by 10–15% for the heat' : undefined
 
   const summary = {
@@ -117,9 +118,9 @@ export function assessWeather(
     moderate: 'Manageable — take precautions and adjust effort as needed.',
     high: 'Challenging conditions. Consider the indoor alternative or reschedule.',
     extreme: 'Dangerous conditions. Indoor training strongly recommended.',
-  }[risk]
+  }[finalRisk]
 
-  return { isSuitable: risk !== 'extreme', riskLevel: risk, warnings, indoorRecommended, intensityAdjustment, summary }
+  return { isSuitable: finalRisk !== 'extreme', riskLevel: finalRisk, warnings, indoorRecommended, intensityAdjustment, summary }
 }
 
 // ─── Indoor Alternatives ──────────────────────────────────────────────────
