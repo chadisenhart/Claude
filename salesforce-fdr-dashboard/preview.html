@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FDR Operations Dashboard — Preview</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f0f0;font-size:14px}
+
+/* ── Header ── */
+.fdr-header{display:flex;align-items:center;justify-content:space-between;
+  background:#fff;padding:12px 20px;border-bottom:2px solid #e5e5e5;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.fdr-header-left{display:flex;align-items:center;gap:12px}
+.fdr-cross{width:52px;height:52px;flex-shrink:0}
+.fdr-title-main{font-size:1.3rem;font-weight:700;color:#e05c14;line-height:1.2}
+.fdr-title-sub{font-size:.9rem;color:#555}
+.fdr-submit-btn{background:#cc0000;color:#fff;border:none;padding:8px 14px;
+  border-radius:4px;font-weight:700;font-size:.8rem;cursor:pointer;line-height:1.3;text-align:center}
+.fdr-submit-btn:hover{background:#a80000}
+
+/* ── Filter bar ── */
+.fdr-filters{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;
+  background:#fff;padding:10px 20px 12px;border-bottom:1px solid #ddd}
+.fdr-filter-group{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.fdr-filter-item{display:flex;flex-direction:column;gap:3px}
+.fdr-filter-item label{font-size:.72rem;font-weight:600;color:#3e3e3c}
+.fdr-filter-item select,.fdr-filter-item input{
+  border:1px solid #ccc;border-radius:4px;padding:5px 8px;font-size:.82rem;
+  background:#fff;min-width:150px;height:32px}
+.fdr-date-sep{padding-bottom:6px;color:#555;font-size:1rem}
+
+/* ── Main grid ── */
+.fdr-main{display:grid;grid-template-columns:58% 42%;gap:0;padding:12px 14px}
+.fdr-col-left{padding-right:12px}
+.fdr-col-right{display:flex;flex-direction:column;gap:10px}
+
+/* ── Section label ── */
+.fdr-section-lbl{font-size:.75rem;font-weight:700;color:#3e3e3c;margin-bottom:4px;
+  text-transform:uppercase;letter-spacing:.5px}
+
+/* ── Map ── */
+.fdr-map-wrap{border:1px solid #ccc;border-radius:4px;overflow:hidden;
+  background:#d4e4f0;margin-bottom:12px;position:relative}
+#fdr-map{height:248px;width:100%}
+.fdr-map-credit{position:absolute;bottom:2px;left:6px;font-size:.62rem;color:#666;
+  pointer-events:none;z-index:999}
+
+/* ── Table ── */
+.fdr-table-wrap{max-height:340px;overflow-y:auto;border:1px solid #ccc;
+  border-radius:4px;background:#fff}
+table.fdr-tbl{width:100%;border-collapse:collapse;font-size:.76rem}
+.fdr-tbl thead th{background:#f5f5f5;color:#333;font-weight:700;padding:6px 8px;
+  text-align:left;border-bottom:2px solid #ddd;white-space:nowrap;
+  position:sticky;top:0;z-index:1}
+.fdr-tbl tbody tr:nth-child(even){background:#fafafa}
+.fdr-tbl tbody tr:hover{background:#fff3ed}
+.fdr-tbl td{padding:5px 8px;border-bottom:1px solid #f0f0f0;color:#1a1a1a;vertical-align:middle}
+.fdr-tbl tfoot td{padding:5px 8px;background:#f5f5f5;font-weight:600;font-size:.72rem;color:#555;text-align:right}
+
+/* ── Badges ── */
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:700;color:#fff}
+.lvl-red{background:#cc0000}.lvl-orange{background:#e05c14}
+.lvl-yellow{background:#c89000}.lvl-blue{background:#4169e1}
+.st-active{background:#e05c14}.st-planning{background:#4169e1}.st-closed{background:#777}
+
+/* ── Cards ── */
+.fdr-card{background:#fff;border:1px solid #ddd;border-radius:4px;padding:12px 14px}
+.fdr-card-title{font-size:.8rem;font-weight:700;color:#3e3e3c;margin-bottom:8px}
+
+/* ── Summary ── */
+.fdr-summary-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0}
+.fdr-summary-lbl{font-size:.9rem;font-weight:700;color:#e05c14}
+.fdr-summary-val{font-size:1.1rem;font-weight:700;color:#1a1a1a}
+
+/* ── Charts ── */
+.fdr-pie-wrap{height:210px;position:relative}
+.fdr-bar-wrap{height:160px;position:relative}
+
+/* ── KPI grid ── */
+.fdr-kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fdr-kpi{background:#fff;border:1px solid #ddd;border-radius:4px;
+  padding:10px 8px;text-align:center}
+.fdr-kpi-wide{grid-column:1/-1}
+.fdr-kpi-num{font-size:1.9rem;font-weight:700;line-height:1.1}
+.fdr-kpi-num.orange{color:#e05c14}.fdr-kpi-num.red{color:#cc0000}
+.fdr-kpi-lbl{font-size:.7rem;color:#555;margin-top:2px}
+
+@media(max-width:900px){
+  .fdr-main{grid-template-columns:1fr}
+  .fdr-col-left{padding-right:0}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<div class="fdr-header">
+  <div class="fdr-header-left">
+    <svg class="fdr-cross" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+      <rect x="24" y="0"  width="12" height="60" fill="#e05c14"/>
+      <rect x="0"  y="24" width="60" height="12" fill="#e05c14"/>
+    </svg>
+    <div>
+      <div class="fdr-title-main">Foursquare Disaster Relief</div>
+      <div class="fdr-title-sub">Operations Dashboard</div>
+    </div>
+  </div>
+  <button class="fdr-submit-btn">CLICK HERE!<br/>Submit FDR Ops Form</button>
+</div>
+
+<!-- ── Filters ── -->
+<div class="fdr-filters">
+  <div class="fdr-filter-group">
+    <div class="fdr-filter-item">
+      <label>FMI Global Area</label>
+      <select id="f-area" onchange="applyFilters()">
+        <option>All</option><option>North America</option><option>Latin America &amp; Caribbean</option>
+        <option>Europe</option><option>Africa</option><option>Middle East &amp; North Africa</option>
+      </select>
+    </div>
+    <div class="fdr-filter-item">
+      <label>FMI Region</label>
+      <select id="f-region" onchange="applyFilters()">
+        <option>All</option><option>North America</option><option>Central America</option>
+        <option>Europe</option><option>MENACA</option><option>East Africa</option>
+        <option>West Africa/WAMCO</option><option>Francophone West Africa</option>
+      </select>
+    </div>
+  </div>
+  <div style="display:flex;align-items:flex-end;gap:6px;margin-left:auto">
+    <div class="fdr-filter-item">
+      <label>Date From</label>
+      <input type="date" id="f-start" value="2026-01-01" onchange="applyFilters()"/>
+    </div>
+    <span class="fdr-date-sep">–</span>
+    <div class="fdr-filter-item">
+      <label>Date To</label>
+      <input type="date" id="f-end" value="2026-12-31" onchange="applyFilters()"/>
+    </div>
+  </div>
+</div>
+
+<!-- ── Main Grid ── -->
+<div class="fdr-main">
+
+  <!-- LEFT: Map + Table -->
+  <div class="fdr-col-left">
+    <div class="fdr-section-lbl">Country</div>
+    <div class="fdr-map-wrap">
+      <div id="fdr-map"></div>
+      <div class="fdr-map-credit">Esri, FAO, NOAA, USGS &nbsp;|&nbsp; Powered by OpenStreetMap</div>
+    </div>
+
+    <div class="fdr-table-wrap">
+      <table class="fdr-tbl">
+        <thead>
+          <tr>
+            <th>Date</th><th>Response</th><th>Country</th>
+            <th>FMI Region</th><th>Disaster Type</th><th>Lvl</th><th>Response Status</th>
+          </tr>
+        </thead>
+        <tbody id="tbl-body"></tbody>
+        <tfoot><tr><td colspan="7" id="tbl-total"></td></tr></tfoot>
+      </table>
+    </div>
+  </div>
+
+  <!-- RIGHT: Summary + Charts + KPIs -->
+  <div class="fdr-col-right">
+
+    <div class="fdr-card">
+      <div class="fdr-card-title">Response Summary</div>
+      <div class="fdr-summary-row">
+        <span class="fdr-summary-lbl">Active</span>
+        <span class="fdr-summary-val" id="kpi-active">–</span>
+      </div>
+      <div class="fdr-summary-row">
+        <span class="fdr-summary-lbl">Planning</span>
+        <span class="fdr-summary-val" id="kpi-planning">–</span>
+      </div>
+    </div>
+
+    <div class="fdr-card">
+      <div class="fdr-card-title">Responses by Disaster Type</div>
+      <div class="fdr-pie-wrap"><canvas id="pie-chart"></canvas></div>
+    </div>
+
+    <div class="fdr-kpi-grid">
+      <div class="fdr-kpi">
+        <div class="fdr-kpi-num orange" id="kpi-total">–</div>
+        <div class="fdr-kpi-lbl">Responses</div>
+      </div>
+      <div class="fdr-kpi">
+        <div class="fdr-kpi-num red" id="kpi-countries">–</div>
+        <div class="fdr-kpi-lbl">Countries Served</div>
+      </div>
+      <div class="fdr-kpi">
+        <div class="fdr-kpi-num red" id="kpi-us">–</div>
+        <div class="fdr-kpi-lbl">US Domestic Responses</div>
+      </div>
+      <div class="fdr-kpi">
+        <div class="fdr-kpi-num red" id="kpi-grants">–</div>
+        <div class="fdr-kpi-lbl">Grants Dispersed</div>
+      </div>
+      <div class="fdr-kpi fdr-kpi-wide">
+        <div class="fdr-kpi-num red" id="kpi-funds">–</div>
+        <div class="fdr-kpi-lbl">Grant Funds Provided</div>
+      </div>
+    </div>
+
+    <div class="fdr-card">
+      <div class="fdr-card-title">Responses by Month</div>
+      <div class="fdr-bar-wrap"><canvas id="bar-chart"></canvas></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── Sample data matching the Power BI screenshot ──────────────────────────
+const ALL_RESPONSES = [
+  {date:'2026-03-30',name:'202604 Caucasus Region – Flood',country:'Russia',region:'Europe',type:'Flood',level:'Yellow',status:'Active',usDomestic:false,grants:2,funds:14200},
+  {date:'2026-03-21',name:'202603 Hawaii – Flood',country:'United States',region:'North America',type:'Flood',level:'Yellow',status:'Active',usDomestic:true,grants:4,funds:28000},
+  {date:'2026-03-17',name:'202603 Honduras',country:'Honduras',region:'Central America',type:'Prevention, Preparedness + Training',level:'Blue',status:'Planning',usDomestic:false,grants:0,funds:0},
+  {date:'2026-03-16',name:'202603 Egypt – Complex Emergency',country:'Egypt',region:'MENACA',type:'Refugee Care',level:'Orange',status:'Active',usDomestic:false,grants:6,funds:42000},
+  {date:'2026-03-07',name:'202603 West Bank – Complex Emergency',country:'West Bank',region:'MENACA',type:'Complex Emergency',level:'Orange',status:'Active',usDomestic:false,grants:5,funds:31500},
+  {date:'2026-03-05',name:'202603 UAE – Complex Emergency',country:'United Arab Emirates',region:'MENACA',type:'Complex Emergency',level:'Orange',status:'Active',usDomestic:false,grants:3,funds:19000},
+  {date:'2026-03-02',name:'202603 Iran – Complex Emergency',country:'Iran',region:'MENACA',type:'Complex Emergency',level:'Orange',status:'Active',usDomestic:false,grants:4,funds:22000},
+  {date:'2026-02-22',name:'202602 Israel – Complex Emergency',country:'Israel',region:'MENACA',type:'Complex Emergency',level:'Orange',status:'Active',usDomestic:false,grants:5,funds:29000},
+  {date:'2026-02-10',name:'202602 Kenya – Drought',country:'Kenya',region:'East Africa',type:'Drought',level:'Yellow',status:'Active',usDomestic:false,grants:7,funds:18500},
+  {date:'2026-02-06',name:'202602 Colombia – Flood',country:'Colombia',region:'Northern South America',type:'Flood',level:'Orange',status:'Active',usDomestic:false,grants:4,funds:12000},
+  {date:'2026-02-06',name:'202602 Nigeria – Complex Emergency',country:'Nigeria',region:'West Africa/WAMCO',type:'Persecution',level:'Red',status:'Active',usDomestic:false,grants:8,funds:41000},
+  {date:'2026-02-04',name:'202602 Niger – Complex Emergency',country:'Niger',region:'Francophone West Africa',type:'Persecution',level:'Red',status:'Active',usDomestic:false,grants:6,funds:38000},
+  {date:'2026-01-18',name:'202601 Syria – Complex Emergency',country:'Syria',region:'MENACA',type:'Complex Emergency',level:'Red',status:'Active',usDomestic:false,grants:9,funds:52000},
+  {date:'2026-01-09',name:'202601 Nepal – Extreme Cold',country:'Nepal',region:'Asia',type:'Extreme Cold',level:'Orange',status:'Active',usDomestic:false,grants:3,funds:8400},
+];
+
+const COORDS = {
+  'Russia':[55.75,37.61],'United States':[37.09,-95.71],'Honduras':[15.20,-86.24],
+  'Egypt':[26.82,30.80],'West Bank':[31.95,35.23],'United Arab Emirates':[23.42,53.85],
+  'Iran':[32.43,53.69],'Israel':[31.05,34.85],'Kenya':[-0.02,37.91],
+  'Colombia':[4.57,-74.30],'Nigeria':[9.08,8.68],'Niger':[17.61,8.08],
+  'Syria':[34.80,38.99],'Nepal':[28.39,84.12],
+};
+const LVL_COLORS = {Red:'#cc0000',Orange:'#e05c14',Yellow:'#c89000',Blue:'#4169e1'};
+const PIE_COLORS = ['#FF6B35','#FFA500','#CC0000','#8B4513','#4169E1','#FF69B4','#20B2AA','#9370DB','#DAA520'];
+
+// ── State ─────────────────────────────────────────────────────────────────
+let leafletMap, mapMarkers=[], pieChart, barChart;
+
+// ── Init ──────────────────────────────────────────────────────────────────
+window.addEventListener('load', ()=>{
+  initMap();
+  applyFilters();
+});
+
+function initMap(){
+  leafletMap = L.map('fdr-map',{center:[20,10],zoom:2,scrollWheelZoom:false,zoomControl:true});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'© OpenStreetMap contributors',maxZoom:18
+  }).addTo(leafletMap);
+}
+
+// ── Filter + Render ───────────────────────────────────────────────────────
+function applyFilters(){
+  const area   = document.getElementById('f-area').value;
+  const region = document.getElementById('f-region').value;
+  const start  = document.getElementById('f-start').value;
+  const end    = document.getElementById('f-end').value;
+
+  const rows = ALL_RESPONSES.filter(r=>{
+    if(area   !== 'All' && !regionMatchesArea(r.region, area)) return false;
+    if(region !== 'All' && r.region !== region) return false;
+    if(start  && r.date < start) return false;
+    if(end    && r.date > end)   return false;
+    return true;
+  });
+
+  renderTable(rows);
+  renderKPIs(rows);
+  renderMapMarkers(rows);
+  renderPie(rows);
+  renderBar(rows);
+}
+
+function regionMatchesArea(region, area){
+  const map = {
+    'North America':['North America'],
+    'Latin America & Caribbean':['Central America','Northern South America','Southern South America','Caribbean'],
+    'Europe':['Europe'],
+    'Africa':['East Africa','West Africa/WAMCO','Francophone West Africa','Southern Africa'],
+    'Middle East & North Africa':['MENACA'],
+  };
+  return (map[area]||[]).includes(region);
+}
+
+// ── Table ─────────────────────────────────────────────────────────────────
+function renderTable(rows){
+  const body = document.getElementById('tbl-body');
+  const lvlClass = {Red:'lvl-red',Orange:'lvl-orange',Yellow:'lvl-yellow',Blue:'lvl-blue'};
+  const stClass  = {Active:'st-active',Planning:'st-planning',Closed:'st-closed'};
+  body.innerHTML = rows.map(r=>`
+    <tr>
+      <td>${fmtDate(r.date)}</td>
+      <td>${r.name}</td>
+      <td>${r.country}</td>
+      <td>${r.region}</td>
+      <td>${r.type}</td>
+      <td><span class="badge ${lvlClass[r.level]||''}">${r.level}</span></td>
+      <td><span class="badge ${stClass[r.status]||''}">${r.status}</span></td>
+    </tr>`).join('');
+  document.getElementById('tbl-total').textContent = `Total: ${rows.length} responses`;
+}
+
+function fmtDate(d){
+  if(!d) return '';
+  const [y,m,day]=d.split('-');
+  return `${m}/${day}/${y}`;
+}
+
+// ── KPIs ──────────────────────────────────────────────────────────────────
+function renderKPIs(rows){
+  const countries = new Set(rows.map(r=>r.country));
+  const active    = rows.filter(r=>r.status==='Active').length;
+  const planning  = rows.filter(r=>r.status==='Planning').length;
+  const usDom     = rows.filter(r=>r.usDomestic).length;
+  const grants    = rows.reduce((s,r)=>s+r.grants,0);
+  const funds     = rows.reduce((s,r)=>s+r.funds,0);
+
+  document.getElementById('kpi-total').textContent    = rows.length;
+  document.getElementById('kpi-active').textContent   = active;
+  document.getElementById('kpi-planning').textContent = planning;
+  document.getElementById('kpi-countries').textContent= countries.size;
+  document.getElementById('kpi-us').textContent       = usDom;
+  document.getElementById('kpi-grants').textContent   = grants;
+  document.getElementById('kpi-funds').textContent    = fmtFunds(funds);
+}
+
+function fmtFunds(v){
+  if(v>=1000000) return '$'+(v/1000000).toFixed(1)+'M';
+  if(v>=1000)    return '$'+(v/1000).toFixed(1)+'K';
+  return '$'+v;
+}
+
+// ── Map Markers ───────────────────────────────────────────────────────────
+function renderMapMarkers(rows){
+  mapMarkers.forEach(m=>m.remove());
+  mapMarkers=[];
+  const seen=new Set();
+  rows.forEach(r=>{
+    if(seen.has(r.country)) return;
+    seen.add(r.country);
+    const coords=COORDS[r.country];
+    if(!coords) return;
+    const m=L.circleMarker(coords,{
+      radius:10,fillColor:LVL_COLORS[r.level]||'#e05c14',
+      color:'#fff',weight:2,opacity:1,fillOpacity:.85
+    });
+    m.bindPopup(`<b>${r.country}</b><br/>Status: <b>${r.status}</b><br/>Level: <b>${r.level}</b><br/>Type: ${r.type}`);
+    m.addTo(leafletMap);
+    mapMarkers.push(m);
+  });
+}
+
+// ── Pie Chart ─────────────────────────────────────────────────────────────
+function renderPie(rows){
+  const counts={};
+  rows.forEach(r=>{ counts[r.type]=(counts[r.type]||0)+1; });
+  const labels=Object.keys(counts);
+  const data=labels.map(l=>counts[l]);
+
+  if(pieChart){
+    pieChart.data.labels=labels;
+    pieChart.data.datasets[0].data=data;
+    pieChart.update();
+    return;
+  }
+  pieChart=new Chart(document.getElementById('pie-chart').getContext('2d'),{
+    type:'pie',
+    data:{labels,datasets:[{data,backgroundColor:PIE_COLORS,borderWidth:2,borderColor:'#fff'}]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'right',labels:{font:{size:10},boxWidth:11,padding:7}},
+        tooltip:{callbacks:{label:c=>{
+          const tot=c.dataset.data.reduce((a,b)=>a+b,0);
+          return `${c.label}: ${c.raw} (${((c.raw/tot)*100).toFixed(1)}%)`;
+        }}}
+      }
+    }
+  });
+}
+
+// ── Bar Chart ─────────────────────────────────────────────────────────────
+function renderBar(rows){
+  const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const counts=Array(12).fill(0);
+  rows.forEach(r=>{ if(r.date){ const m=parseInt(r.date.split('-')[1],10)-1; counts[m]++; }});
+  const nonZero=MONTHS.map((l,i)=>({l,v:counts[i]})).filter(x=>x.v>0);
+  const labels=nonZero.map(x=>x.l);
+  const data=nonZero.map(x=>x.v);
+
+  if(barChart){
+    barChart.data.labels=labels;
+    barChart.data.datasets[0].data=data;
+    barChart.update();
+    return;
+  }
+  barChart=new Chart(document.getElementById('bar-chart').getContext('2d'),{
+    type:'bar',
+    data:{labels,datasets:[{label:'Responses',data,backgroundColor:'#e05c14',borderRadius:3}]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        y:{beginAtZero:true,ticks:{stepSize:1,precision:0},grid:{color:'#e5e5e5'}},
+        x:{grid:{display:false}}
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
