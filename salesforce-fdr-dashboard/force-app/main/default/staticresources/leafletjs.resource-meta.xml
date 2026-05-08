@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
+    <cacheControl>Public</cacheControl>
+    <contentType>application/zip</contentType>
+    <description>Leaflet.js — download leaflet.js and leaflet.css from https://leafletjs.com, zip them together, and upload as this Static Resource. The zip must contain leaflet.js and leaflet.css at the root level.</description>
+</StaticResource>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>FMI_Region__c</fullName>
+    <label>FMI Region</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>false</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>North America</fullName>
+                <default>false</default>
+                <label>North America</label>
+            </value>
+            <value>
+                <fullName>Central America</fullName>
+                <default>false</default>
+                <label>Central America</label>
+            </value>
+            <value>
+                <fullName>Northern South America</fullName>
+                <default>false</default>
+                <label>Northern South America</label>
+            </value>
+            <value>
+                <fullName>Southern South America</fullName>
+                <default>false</default>
+                <label>Southern South America</label>
+            </value>
+            <value>
+                <fullName>Caribbean</fullName>
+                <default>false</default>
+                <label>Caribbean</label>
+            </value>
+            <value>
+                <fullName>Europe</fullName>
+                <default>false</default>
+                <label>Europe</label>
+            </value>
+            <value>
+                <fullName>MENACA</fullName>
+                <default>false</default>
+                <label>MENACA</label>
+            </value>
+            <value>
+                <fullName>East Africa</fullName>
+                <default>false</default>
+                <label>East Africa</label>
+            </value>
+            <value>
+                <fullName>West Africa/WAMCO</fullName>
+                <default>false</default>
+                <label>West Africa/WAMCO</label>
+            </value>
+            <value>
+                <fullName>Francophone West Africa</fullName>
+                <default>false</default>
+                <label>Francophone West Africa</label>
+            </value>
+            <value>
+                <fullName>Southern Africa</fullName>
+                <default>false</default>
+                <label>Southern Africa</label>
+            </value>
+            <value>
+                <fullName>Asia</fullName>
+                <default>false</default>
+                <label>Asia</label>
+            </value>
+            <value>
+                <fullName>Pacific</fullName>
+                <default>false</default>
+                <label>Pacific</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
