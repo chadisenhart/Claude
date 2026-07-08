@@ -1,0 +1,140 @@
+<template>
+  <div class="md-shell">
+
+    <!-- ── Header ── -->
+    <div class="md-header">
+      <div class="md-header-left">
+        <svg class="md-globe" viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="22" stroke="#1b6cb5" stroke-width="2.5" fill="#e8f4fd"/>
+          <ellipse cx="24" cy="24" rx="10" ry="22" stroke="#1b6cb5" stroke-width="1.5" fill="none"/>
+          <line x1="2" y1="24" x2="46" y2="24" stroke="#1b6cb5" stroke-width="1.5"/>
+          <line x1="2" y1="17" x2="46" y2="17" stroke="#1b6cb5" stroke-width="1"/>
+          <line x1="2" y1="31" x2="46" y2="31" stroke="#1b6cb5" stroke-width="1"/>
+        </svg>
+        <div>
+          <div class="md-title-main">Missions Dashboard</div>
+          <div class="md-title-sub">Missionary Deployment &amp; Support Overview</div>
+        </div>
+      </div>
+      <div class="md-stat-row">
+        <div class="md-stat">
+          <span class="md-stat-val">{stats.totalMissionaries}</span>
+          <span class="md-stat-lbl">Missionaries</span>
+        </div>
+        <div class="md-stat">
+          <span class="md-stat-val">{stats.activeMissionaries}</span>
+          <span class="md-stat-lbl">Active</span>
+        </div>
+        <div class="md-stat">
+          <span class="md-stat-val">{stats.totalCountries}</span>
+          <span class="md-stat-lbl">Countries</span>
+        </div>
+        <div class="md-stat">
+          <span class="md-stat-val">{stats.totalGivingFormatted}</span>
+          <span class="md-stat-lbl">Total Support</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Filters ── -->
+    <div class="md-filters">
+      <div class="md-filter-item">
+        <label>Region</label>
+        <select onchange={handleRegionChange}>
+          <template for:each={regionOptions} for:item="opt">
+            <option key={opt} value={opt}>{opt}</option>
+          </template>
+        </select>
+      </div>
+      <div class="md-filter-item">
+        <label>Status</label>
+        <select onchange={handleStatusChange}>
+          <option value="All">All</option>
+          <option value="Active">Active</option>
+          <option value="Home Assignment">Home Assignment</option>
+          <option value="Candidate">Candidate</option>
+          <option value="On Hold">On Hold</option>
+        </select>
+      </div>
+      <div class="md-filter-item">
+        <label>Search</label>
+        <input type="text" placeholder="Name or country…" oninput={handleSearch}/>
+      </div>
+    </div>
+
+    <!-- ── Loading / Error ── -->
+    <template if:true={isLoading}>
+      <div class="md-loading">Loading missionary data…</div>
+    </template>
+
+    <template if:true={error}>
+      <div class="md-error">
+        <strong>Error loading data:</strong> {errorMessage}
+      </div>
+    </template>
+
+    <!-- ── Body ── -->
+    <template if:false={isLoading}>
+      <div class="md-body">
+
+        <!-- ── Map ── -->
+        <div class="md-map-section">
+          <div class="md-section-lbl">World Deployment Map</div>
+          <div class="md-map-wrap">
+            <div class="md-map" lwc:ref="mapContainer"></div>
+            <div class="md-map-legend">
+              <span class="leg-dot" style="background:#27ae60"></span> Active &nbsp;
+              <span class="leg-dot" style="background:#f39c12"></span> Home Assignment &nbsp;
+              <span class="leg-dot" style="background:#2980b9"></span> Candidate &nbsp;
+              <span class="leg-dot" style="background:#95a5a6"></span> On Hold
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Table ── -->
+        <div class="md-table-section">
+          <div class="md-section-lbl">
+            Missionaries ({filteredCount})
+            <template if:true={hasActiveFilter}>
+              <span class="md-filter-badge">Filtered</span>
+            </template>
+          </div>
+          <div class="md-table-wrap">
+            <table class="md-tbl">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Country</th>
+                  <th>Region</th>
+                  <th>Status</th>
+                  <th>Organization</th>
+                  <th class="num">Support Raised</th>
+                  <th class="num">Gifts</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template for:each={filteredMissionaries} for:item="m">
+                  <tr key={m.id}>
+                    <td class="name-cell">
+                      <a href={m.recordUrl} target="_blank">{m.name}</a>
+                    </td>
+                    <td>{m.country}</td>
+                    <td>{m.region}</td>
+                    <td>
+                      <span class={m.statusClass}>{m.status}</span>
+                    </td>
+                    <td>{m.organization}</td>
+                    <td class="num">{m.givingFormatted}</td>
+                    <td class="num">{m.giftCount}</td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </template>
+
+  </div>
+</template>
