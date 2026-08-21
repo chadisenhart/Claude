@@ -1,0 +1,459 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BRAND AUDIT: Foursquare Missions International (FMI)
+Audited URL: foursquaremissions.com / foursquaremissions.org
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+NOTE ON URL: The user-provided URL (foursquaremissions.com) redirects to or
+corresponds with foursquaremissions.org, which is the live indexed site with
+active pages. The .com domain itself returned no indexable content in search.
+If .com is a separate microsite or redirect, that split itself is worth
+auditing — donors who land on the wrong domain and hit a dead end do not give.
+All findings below are based on foursquaremissions.org content and publicly
+indexed material.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+OVERALL SCORE: 19/40   GRADE: D
+
+[A = 36-40 | B = 29-35 | C = 21-28 | D = 13-20 | F = 12 or below]
+
+━━━ EXECUTIVE SUMMARY ━━━
+
+FMI's strongest asset is a warm email list — people are opening because they
+already care about missions. The structural problem is that the messaging
+architecture was built to recruit missionaries and retain denominational
+insiders, not to move a general donor to click and give. The CTAs are vague,
+the giving page describes fund mechanics instead of human outcomes, and the
+homepage hero targets the wrong audience entirely. The single highest-leverage
+fix is rewriting the giving page with a specific anchored ask, a concrete
+dollar-to-outcome statement, and one deadline — because that is the page where
+warm, engaged email readers are landing and leaving without giving.
+
+━━━ SCORECARD ━━━
+
+Dimension                  | Score | Verdict
+---------------------------|-------|--------------------------------------------------
+1. Hook Strength           |   2   | Institutional openers; org is always the subject
+2. Messaging Clarity       |   3   | Core idea is legible but insider language obscures it
+3. CTA Effectiveness       |   2   | No amount, no deadline, no outcome — multiple competing asks
+4. Psychological Levers    |   2   | Authority only; six levers sitting untouched
+5. Audience Precision      |   2   | Recruits missionaries on a donor page; speaks to everyone
+6. Voice Consistency       |   3   | Faith vocabulary is consistent; register is not
+7. Channel Coverage        |   3   | Channels exist but do not form a funnel
+8. Strategic Blind Spots   |   2   | Audience identity crisis is the root of every other problem
+
+━━━ DETAILED FINDINGS ━━━
+
+-- DIMENSION 1: HOOK STRENGTH (2/5) --
+
+- Homepage hero headline: "Workers wanted to boldly bring the gospel of Jesus
+  to every person on Earth." The org is the subject. A stranger reads this and
+  learns what FMI wants, not why it should matter to them. The "workers wanted"
+  framing is recruitment copy positioned as the first thing every visitor —
+  including donors — encounters.
+
+- Instagram bio (@foursquaremissions, 2,217 followers): "FMI is taking the
+  whole gospel to the whole world, until all have heard." The org is the subject
+  in three consecutive words. No tension. No specific person or place. A reader
+  can scroll past this in under one second.
+
+- Facebook: "No place is beyond God's reach" (found in a post). This is warmer
+  and more evocative, but it is a theological platitude — there is no tension, no
+  forward pull, nothing that makes you need to know what comes next.
+
+- "See. Love. Reach." — this three-word tagline is more structurally interesting
+  but functions as a slogan, not a hook. It does not open a question or name a
+  tension a reader wants resolved.
+
+- No email subject lines are publicly indexed, but the user reports decent open
+  rates and near-zero click-through. This is consistent with hooks that earn an
+  open (the sender's name and mission topic are enough for warm subscribers) but
+  body copy that does not sustain the pull into a CTA.
+
+- No piece of found copy opens with a named individual, a specific crisis moment,
+  or a counterintuitive claim. Every opener is either the org stating its own
+  purpose or a broad theological declaration.
+
+-- DIMENSION 2: MESSAGING CLARITY (3/5) --
+
+- The core idea — sending missionaries to people who have never heard the Gospel
+  — is understandable after reading multiple pages. But it is not instantly clear
+  from any single channel in five seconds.
+
+- Four different framings compete for the primary message slot:
+  (1) "Workers wanted to boldly bring the gospel of Jesus to every person on Earth"
+  (2) "FMI is taking the whole gospel to the whole world, until all have heard"
+  (3) "See. Love. Reach." (the giving campaign framing)
+  (4) "Crossing barriers to get the gospel to unreached people and places"
+  These are not contradictory, but they are not one tight message either. A donor
+  who reads the email, then visits the homepage, then clicks to Give encounters
+  three different framings and never hears the same sentence twice.
+
+- Insider vocabulary runs throughout donor-facing copy: "FMI," "GMF" (Global
+  Missions Fund), "unreached people groups," "indigenous movements," "Great
+  Commission," "sending churches," "mobilizers." A Foursquare church member
+  likely knows most of these. A donor referred by a friend, or someone who found
+  FMI through social, is lost within 15 seconds.
+
+- The Global Missions Fund — apparently FMI's primary giving vehicle — is
+  described as: "supports key regional leaders worldwide, allowing them to direct
+  their full attention to expansion of church movements, partnership toward
+  indigenous leadership, and the needs of nations with unreached people and
+  places." This sentence describes an organizational structure. It does not
+  describe a human outcome.
+
+- The connection between FMI and The Foursquare Church denomination is unclear
+  to outsiders. Is FMI independent? Is it a department of the denomination? Does
+  giving to FMI go to the same place as giving to a local Foursquare church? The
+  answer probably exists somewhere on the site; it is not surfaced clearly in any
+  donor-facing copy.
+
+-- DIMENSION 3: CTA EFFECTIVENESS (2/5) --
+
+- The primary giving CTA found indexed: "Give now to FMI's Global Missions Fund."
+  No amount anchored. No deadline stated. No concrete outcome tied to the gift
+  (no "$50 trains a local leader" or "$25/month funds one month of field work").
+  A motivated donor clicks through and has no idea what a meaningful gift looks
+  like.
+
+- Multiple competing giving destinations exist: foursquaremissions.org/give/,
+  give.foursquare.org/give/f4318499/, give.foursquare.org/campaign/
+  foursquare-missions-international/c454031/, and the "See. Love. Reach."
+  campaign page. A donor clicking from email to "give" may land on any of these
+  and encounter a different page with different framing. Splitting the ask splits
+  the conversion.
+
+- The site's navigation presents four parallel primary actions: Give, Go, Pray,
+  Send. These are not sequenced or prioritized for a donor. A first-time visitor
+  with money to give has to self-select their path from four equally-weighted
+  options.
+
+- No urgency mechanism is visible in any indexed giving copy: no match deadline,
+  no campaign goal thermometer, no "X days left," no "we're $12,000 short of our
+  goal." Without a reason to act today, a warm reader who intended to give can
+  close the tab and never return.
+
+- The "Wanted" page CTA for missionary recruiters: "Fill out this form, and an
+  FMI representative will reach out." Generic. No clear next step. No
+  differentiation between the form a potential missionary fills out and the form
+  a "mobilizer" (pastor) fills out.
+
+-- DIMENSION 4: PSYCHOLOGICAL LEVERS (2/5) --
+
+Levers in use:
+
+  Authority: USED — "Since 1924," 100-year history, 158 nations/territories,
+  100,000+ churches in partnership, 300+ missionary workers. This is the
+  dominant lever and it is deployed consistently.
+
+  Story: PARTIAL — "See. Love. Reach." has narrative structure and the copy
+  references "unreached people groups in closed nations." But story requires a
+  named individual with a specific before/after arc. No named person appears in
+  any indexed FMI donor-facing copy. Collective story ("unreached people groups")
+  is not the same thing as a story.
+
+  Urgency: NOT USED — No deadline, no match expiration, no campaign close date
+  in any indexed material. "Until all have heard" expresses eternal urgency but
+  not actionable urgency.
+
+  Scarcity: NOT USED — No "only X spots remain," no "this match ends Friday,"
+  no limited-time framing of any kind.
+
+  Social Proof: NOT USED — FMI has 13,288 Facebook followers and a network of
+  100,000+ churches. Neither of these is deployed as social proof for donors.
+  "Join 13,000 people who support FMI" or "4,200 donors gave last year to reach
+  closed nations" — neither framing appears in indexed copy. Organizational
+  scale is cited (authority), but donor community size is not.
+
+  Reciprocity: NOT USED — Prayer guides exist on the site, but there is no
+  evidence of a free resource delivered before the ask. No field-report PDF, no
+  "here's what's happening in one village right now" email before the donate
+  ask. The relationship goes directly to the ask.
+
+  Identity: NOT USED — No "you are the kind of person who..." framing. No copy
+  that positions giving to FMI as an expression of who the donor already
+  believes themselves to be.
+
+  Belonging: NOT USED — "Foursquare family" language appears in broader
+  Foursquare church contexts but is not leveraged in FMI donor copy. Donors are
+  not invited into a named community of supporters. There is no insider identity
+  for regular FMI donors equivalent to "FMI Partner" or similar.
+
+Levers being left on the table:
+
+  Social Proof — FMI has the numbers to use this (100,000 churches, 300+
+  workers, years of history). Reformatting organizational scale into donor
+  community proof ("join 8,000 monthly givers") would lower the decision barrier
+  for fence-sitters.
+
+  Urgency — The single fastest mechanism to lift click-to-give conversion from
+  email. Every send should include a reason to act before the next send arrives.
+
+  Identity — Faith-based donors often give because of who they believe God has
+  called them to be, not just what the org does. "People like you don't just
+  pray for the unreached — they act" is a different ask than "give to the GMF."
+
+  Belonging — FMI's best donors are probably deeply embedded in the Foursquare
+  church community. A named inner circle ("FMI Partners," "Frontline Givers")
+  with exclusive updates from the field would deepen retention and upgrade
+  giving.
+
+  Reciprocity — A prayer guide, a quarterly field letter from a specific
+  missionary, a "here's one thing happening this week in Southeast Asia" email
+  — all of these give before asking and build the trust that turns opens
+  into clicks.
+
+-- DIMENSION 5: AUDIENCE PRECISION (2/5) --
+
+- The homepage hero — "Workers wanted" — is explicitly addressed to potential
+  missionaries. Donors who land on the homepage see recruiting copy. This is the
+  most concrete symptom of the audience confusion: the person FMI needs to click
+  a CTA is reading copy meant for someone who wants to move overseas.
+
+- The site appears to serve at minimum four distinct audiences simultaneously:
+  potential missionaries (Go, Wanted, Long-Term, Short-Term pages), current
+  denominational donors (Give, GMF), church pastors (Sending, Mobilizers
+  section), and prayer partners (Pray page). No segmented entry points are
+  visible. All four land on the same homepage.
+
+- "Everyone can make a difference" is not present verbatim, but the structure
+  of the site — "You can Give, Go, Pray, or Send" — functions identically. It
+  addresses four types of engagement simultaneously rather than leading any one
+  type of person down a clear path.
+
+- The copy assumes the reader already cares about the Great Commission. The
+  "Why Missions?" page exists, which suggests FMI knows it needs to earn that
+  caring — but it is a secondary page, not the entry point. A first-time visitor
+  from a social share who is spiritually curious but not already missions-
+  committed hits the "Workers wanted" hero and either self-selects into the
+  missionary path (small pool) or leaves (everyone else).
+
+- No segmentation between cold audience and warm donors is visible. The person
+  who subscribed to the email list last week and the 10-year monthly donor get
+  the same message.
+
+-- DIMENSION 6: VOICE CONSISTENCY (3/5) --
+
+- The faith vocabulary is consistent across channels: "gospel," "nations,"
+  "unreached," "disciples," "Great Commission." This is the skeleton of a voice.
+
+- But the register shifts considerably depending on where you look:
+  - Instagram bio: punchy, slogan-tight ("taking the whole gospel to the whole
+    world, until all have heard")
+  - Homepage hero: slightly formal, recruitment-framed ("Workers wanted to
+    boldly bring the gospel of Jesus to every person on Earth")
+  - GMF giving page: bureaucratic, committee-memo register ("supports key
+    regional leaders worldwide, allowing them to direct their full attention to
+    expansion of church movements, partnership toward indigenous leadership")
+  - "See. Love. Reach." campaign: aspirational, poetic ("God sees the spiritually
+    lost and invites us to see the world as He does: with compassion for the
+    lost and courage to act")
+  - "Wanted" page: warmer, conversational ("courageous couples, brave
+    individuals, skilled workers and daring families who are unafraid to follow
+    God's call, no matter the cost")
+
+- A donor who receives an email (likely written in one register), clicks to the
+  giving page (bureaucratic GMF copy), and then checks Instagram (punchy bio)
+  would not immediately recognize these as one organization's voice.
+
+- The shift between "aspirational missions voice" and "organizational
+  administrative voice" is the most damaging inconsistency — because the
+  administrative voice shows up exactly where the donor is making a decision.
+
+-- DIMENSION 7: CHANNEL COVERAGE (3/5) --
+
+- Website: Active, multiple pages, appears functional. Mobile and SEO status
+  cannot be confirmed from available data.
+
+- Email: Active. User reports decent open rates, near-zero click-through. List
+  exists and is warm. The channel is working at the awareness layer and failing
+  at the conversion layer.
+
+- Facebook: 13,288 likes / 232 currently talking = ~1.7% engagement rate. For
+  context, average Facebook page engagement is 1-2%. FMI is at the floor of
+  acceptable, not above it. The community is large enough to leverage but is
+  not being activated.
+
+- Instagram: @foursquaremissions — 2,217 followers, 585 posts. The post volume
+  (585) is high relative to the follower count. Volume is not compensating for
+  reach. No evidence of a growth strategy visible in indexed data.
+
+- Video: Referenced in foursquare.org resources ("Go with Foursquare Missions
+  International" video, "Give with FMI" video), but whether these are actively
+  promoted or primarily exist as reference content is unclear.
+
+- Short-form video (Reels, Shorts): No evidence of an active short-form video
+  presence. If FMI's target donor is under 50, this is a meaningful gap.
+
+- Direct mail / print: Not evident in any indexed materials. Church kits and
+  connection offering materials exist (Foursquare Connection 2026 in San Antonio
+  referenced a missions offering), but these appear to be denominational
+  distribution, not FMI-controlled direct mail.
+
+- Cross-channel path: Social posts appear to link to the website; the website
+  collects email subscribers; email sends drives (in theory) to giving pages.
+  The architecture exists but the conversion layer (email to give) is failing,
+  which suggests the problem is in the ask mechanics, not the channel structure.
+
+-- DIMENSION 8: STRATEGIC BLIND SPOTS (2/5) --
+
+Blind spot 1 — The missionary/donor channel collision:
+FMI's highest-traffic entry point (homepage) is optimized for missionary
+recruitment. The homepage hero is a job posting. The "Wanted," "Go," and
+sending-church pages reflect significant investment. This is appropriate if the
+top priority is deploying missionaries. It is the wrong funnel if the problem
+is donor click-through. The org may not have consciously decided which audience
+owns the homepage, and so it serves neither audience well.
+
+Blind spot 2 — Organizational metrics masquerading as donor impact:
+"158 nations," "100,000 churches," "300+ workers," "since 1924" — these are
+authority signals, not impact statements. They tell a donor how big FMI is, not
+what a donor's gift does. There is a consistent pattern across all channels of
+leading with organizational scale rather than human outcome. A donor asking
+"what does my $100 do?" cannot answer that question from any indexed FMI copy.
+
+Blind spot 3 — Treating opens as a conversion signal:
+Decent email open rates feel like success. They are not. Open rates measure
+subject line performance and sender trust — both of which may be working fine.
+The problem is in the email body and the destination page. An org that sees
+good opens and attributes the lack of clicks to "messaging not landing" is
+looking at the symptom (clicks) and diagnosing the wrong component (messaging
+generally). The specific failure is: no specific ask, no deadline, and a
+giving page that cannot answer "why now?" or "what exactly will this do?"
+
+━━━ PSYCHOLOGICAL LEVERS IN USE ━━━
+
+Urgency ✗ | Scarcity ✗ | Social Proof ✗ | Authority ✓
+Reciprocity ✗ | Identity ✗ | Belonging ✗ | Story (partial) ✓
+
+Levers being left on the table:
+
+  Social Proof — FMI has a large network (100,000 partner churches, 13,000+
+  Facebook followers). Reframing this as donor community size ("join 8,000
+  people who give monthly to reach the unreached") changes a statistic into
+  an invitation.
+
+  Urgency — The fastest mechanism to lift email-to-give conversion. Quarterly
+  matched giving windows, campaign goal thermometers, or end-of-year deadlines
+  give warm readers a reason to click today rather than next week (which means
+  never).
+
+  Scarcity — Limited GO Team slots, missionary deployment windows closing,
+  or a giving match with a hard cap — all of these create real scarcity that
+  already exists in FMI's programs. Naming it explicitly is not manipulation;
+  it is honest communication about how missions deployment works.
+
+  Identity — Faith donors give from identity ("I am someone who believes the
+  unreached deserve to hear the Gospel, and that means I have to do something").
+  No copy addresses the donor's sense of who they are or who they want to be.
+
+  Belonging — Regular, committed donors to a missions org want to feel like
+  insiders. A named community tier, exclusive field updates, and language that
+  separates "our people" from the general public would increase both retention
+  and upgrade giving.
+
+  Reciprocity — Deliver something of value before the ask: a quarterly printed
+  field letter from a named missionary, a prayer guide tied to a specific
+  unreached people group, a short video of life in a village FMI serves.
+  Reciprocity lowers the psychological barrier between reading and clicking.
+
+━━━ PRIORITY FIX LIST ━━━
+
+Ranked by estimated impact (high impact + low effort at the top):
+
+1. Rewrite the giving page with a specific anchored ask and one deadline.
+   This is the direct cause of "nobody clicks through to give." The current
+   giving page describes fund mechanics, not outcomes. Replace "supports key
+   regional leaders worldwide, allowing them to direct their full attention to
+   expansion of church movements" with something like: "Your gift of $75 funds
+   one month of field expenses for a missionary family in a closed nation."
+   Add a deadline or a match. Give donors a reason to act before closing the
+   tab. This is the highest-leverage change in the audit because it is the
+   page where warm, engaged email readers arrive and leave without converting.
+   Cost to fix: one afternoon of copy revision. Cost to ignore: every email
+   that earns an open but no gift.
+
+2. Add urgency to every email CTA.
+   Decent open rates with near-zero click-through means the audience is warm
+   but the ask is not doing its job. Every email should include at minimum one
+   of: a deadline ("match expires Sunday"), a campaign goal ("we're $4,200
+   from our goal"), or a time-sensitive story ("a GO Team deploys in 11 days
+   and needs $3,000 more to go"). The subject line earns the open; urgency in
+   the body earns the click. Without it, every send is an announcement that the
+   reader can admire and close.
+
+3. Create a separate donor homepage entry point (or a donor-specific email
+   landing page).
+   The current homepage hero recruits missionaries. The email list is
+   (presumably) donors. These audiences need different entry experiences. At
+   minimum, every fundraising email should link to a dedicated landing page —
+   not the general homepage — with one message, one story, one ask, one button.
+   No navigation. No competing paths. This can be built as a simple campaign
+   page and will outperform the general homepage for donation conversion
+   immediately.
+
+4. Add one named individual story to every major donor touchpoint.
+   The largest psychological lever FMI is leaving unused is specific story.
+   "Unreached people groups in closed nations" is a category. A named person
+   in a named country with a before/after moment is a story. Story does not
+   require a case study — one paragraph with a name, a country, and a single
+   moment of change is enough to shift the emotional register of a giving ask.
+   This costs one interview with one field worker per quarter.
+
+5. Strip insider language from donor-facing copy.
+   "GMF," "FMI," "indigenous movements," "unreached people groups," "Great
+   Commission," "mobilizer," "sending church" — audit every piece of donor-
+   facing copy for these terms and replace each one with plain language.
+   "Indigenous movements" = "local church networks led by local people."
+   "Unreached people groups" = "communities who have never heard the Gospel."
+   The Foursquare insider reading this already knows what these terms mean; the
+   Foursquare adjacent donor who gave once in 2021 and is now reading an email
+   does not. Write for the latter.
+
+6. Deploy social proof on the giving page and in emails.
+   FMI has the numbers: 13,000+ Facebook followers, 100,000 partner churches,
+   100 years of presence. These are organizational authority stats. Convert them
+   into donor community proof: "4,800 people gave to FMI last year to reach
+   closed nations. Add your name." This is a one-line copy change on the giving
+   page and a one-line addition to each email. It changes the ask from
+   institutional ("support this org") to communal ("join these people").
+
+7. Consolidate giving destinations to one URL.
+   Three or more active giving URLs (foursquaremissions.org/give, two
+   give.foursquare.org pages, the See Love Reach campaign) split traffic,
+   split reporting, and create a disjointed donor experience. Choose one
+   canonical giving URL, redirect everything else to it, and make that page
+   the only destination emails point to. This also consolidates tracking so
+   you can actually see what is working.
+
+8. Establish a pre-ask reciprocity touchpoint in email.
+   For new email subscribers and lapsed donors, build a short welcome or re-
+   engagement sequence that delivers value before the first ask: a field story,
+   a prayer guide for a specific region, a short video from a missionary.
+   FMI's give page notes prayer guides exist — deploy them as the first thing
+   a new subscriber receives, not as a buried site resource. Three emails of
+   value before the first direct ask would likely lift click-through rates on
+   subsequent giving emails measurably.
+
+━━━ STRATEGIC DIAGNOSIS ━━━
+
+The root cause connecting every weak score in this audit is an audience
+identity crisis that has been baked into FMI's messaging architecture. The
+org built its digital presence to serve three audiences at once — potential
+missionaries, denominational donors, and church pastors considering sending
+partnerships — without clearly deciding which audience owns which channel or
+which page. The result is a homepage hero that recruits workers (targeting a
+small pool), a giving page that describes organizational structures (targeting
+no one specifically), and an email list of warm supporters who open every send
+and click nothing. The messaging is not the problem. The architecture is.
+
+The email open rates are the most important data point in this audit. They
+tell you the audience is there, they trust the sender, and they are willing
+to give their attention. The near-zero click-through tells you the ask is not
+earning action — not because the cause is unappealing, but because the ask
+never gives a specific person a specific reason to act right now. Fixing that
+one conversion layer — from email body to giving page — with a specific dollar
+amount, a named human story, an urgency mechanism, and a single CTA does not
+require a rebrand. It requires a clear-eyed decision about who FMI is talking
+to when it asks for money, followed by copy that actually speaks to that person.
+Everything else in this fix list is secondary to that decision.
