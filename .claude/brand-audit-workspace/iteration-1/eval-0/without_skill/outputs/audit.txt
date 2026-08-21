@@ -1,0 +1,350 @@
+FOURSQUARE MISSIONS BRAND AUDIT
+================================
+Auditor: Claude (claude-sonnet-4-6)
+Date: 2026-08-21
+Site reviewed: foursquaremissions.com / foursquaremissions.org
+Method: Network egress restrictions blocked direct page fetches; audit draws on
+        search engine cached content, indexed page summaries, and structured
+        web search results. All quoted copy is sourced from those results.
+
+EXECUTIVE SUMMARY
+-----------------
+FMI has a real problem that many established ministry organizations share: the
+brand speaks primarily TO insiders and ABOUT the organization, not TO potential
+donors and ABOUT what their gift will accomplish. The result is exactly the
+symptom you described — people are intrigued enough to open your emails (the
+subject line or sender name earns the click), but when they arrive they don't
+find a compelling enough reason to convert.
+
+The core issue is not awareness. It is conversion friction created by
+organization-centric messaging, vague calls to action, and an emotional arc
+that never closes on the donor.
+
+---
+
+SECTION 1: BRAND IDENTITY
+--------------------------
+
+1.1 Name and URL Discrepancy
+The organization appears to operate across at least two domains:
+  - foursquaremissions.com (the URL you referenced)
+  - foursquaremissions.org (what search results return for the canonical site)
+  - give.foursquare.org (the actual donation processing page)
+
+This is a brand integrity problem. Donors who click from an email, land on one
+domain, and then find themselves redirected to a third domain for the actual
+giving transaction face trust friction at the most critical moment. Each
+redirect is an opportunity for drop-off, and each different-looking domain
+signals fragmentation rather than organizational confidence. Unify under a
+single domain or make the give.foursquare.org experience visually seamless
+with the main brand.
+
+1.2 Organizational Identity
+FMI presents itself as a large, established, globally scaled organization:
+  - 158 countries and territories
+  - Partnership with 100,000+ churches
+  - Decades of history under the Foursquare Church umbrella
+
+Scale is real credibility — but it is being deployed incorrectly. Large numbers
+create awe, not urgency. A donor who reads "100,000 churches in 158 countries"
+does not think "my gift matters here." They think "this is a massive operation
+that doesn't need me." Scale copy needs to be paired immediately with specific,
+personal impact stories that prove an individual gift still moves the needle.
+
+---
+
+SECTION 2: MESSAGING ANALYSIS
+------------------------------
+
+2.1 The Mission Statement / Homepage Positioning
+From indexed content, the homepage lead message is approximately:
+
+  "Poised to take part in ensuring every person in the world hears the gospel
+   of Jesus Christ. However far, however difficult it may be, we're ready to go."
+
+Diagnosis:
+  - Subject is "we" (the organization), not "you" (the donor).
+  - "Poised to take part" is passive and bureaucratic. It hedges commitment
+    rather than asserting it.
+  - "However far, however difficult" communicates organizational grit, which
+    is admirable, but it does not answer the donor's implicit question:
+    "What happens because of my gift?"
+  - There is no tension or stakes. Good missionary communication creates a
+    felt need — a picture of people unreached, communities without the gospel,
+    a problem that exists right now — before presenting the solution. This copy
+    goes straight to solution without establishing the problem.
+
+Reframe test: What if the opening line positioned the donor as the hero?
+  Instead of: "We're ready to go."
+  Consider: "There are 3.4 billion people who have never once heard the name
+             of Jesus. They won't hear it unless someone goes. You can send
+             someone today."
+
+2.2 The "Workers Wanted" Call to Action
+This CTA was found in search-indexed homepage content.
+
+Diagnosis:
+  - "Workers wanted" is an internal recruitment phrase, not a donor-facing CTA.
+  - It implies a volunteer/missionary ask, not a giving ask. A donor who is
+    not planning to go on the field reads this as "not for me."
+  - For a giving page, this language creates a disconnect: the visitor thinks
+    they've landed on a jobs board, not a place to partner financially.
+  - The phrase also carries dated mid-century mission-agency connotations.
+    It does not resonate with younger donors (Millennials, Gen Z) who are
+    skeptical of institutional language and respond better to direct,
+    outcome-framed asks.
+
+2.3 The "See. Love. Reach." Initiative Tagline
+This three-word tagline describes FMI's approach to unreached people groups.
+
+Diagnosis:
+  - Internally meaningful, externally opaque. Taglines that compress a
+    philosophy into three words require significant brand education before they
+    communicate anything. Without that education, a new visitor sees three
+    generic verbs.
+  - Compare to how effective nonprofit taglines work: they either describe an
+    outcome ("Ending hunger. Now." — direct, results-oriented) or evoke a
+    felt experience ("Until there's a cure" — emotional, urgent). "See. Love.
+    Reach." does neither without explanation.
+  - The tagline is not a problem to fix so much as a framing to supplement.
+    It should always appear with a single explanatory sentence that makes the
+    mission concrete and stakes-driven.
+
+2.4 The Global Missions Fund Description
+From indexed content:
+
+  "The Global Missions Fund is independently funded by tax-deductible
+   individual and church donations that support the development of a network
+   of more than 100,000 churches and gatherings in 157 nations and territories."
+
+Diagnosis:
+  - This is a legal/accounting description, not a giving appeal.
+  - "Development of a network" is organizational inside-speak. Donors give to
+    people, not networks.
+  - No human story, no outcome, no urgency. This copy answers the compliance
+    question ("Is this tax-deductible?") before it answers the motivation
+    question ("Why should I care?").
+  - The "how to donate" section (phone numbers, URLs) appears to lead with
+    mechanics before motivation — a conversion-killer sequence. Motivation
+    must precede mechanics.
+
+---
+
+SECTION 3: THE EMAIL-TO-GIVE CONVERSION PROBLEM
+-------------------------------------------------
+
+You described good open rates with low give click-through. This is a
+well-documented pattern in nonprofit email, and it has a clear cause:
+
+The email earns the open because the sender name ("Foursquare Missions") or
+subject line is recognizable and trusted. But once opened, the reader does not
+find:
+  (a) a specific, visceral story that makes the need feel real and urgent today
+  (b) a single, clear call to action with a specific dollar amount tied to a
+      specific outcome
+  (c) a reason why NOW matters (deadline, matching gift, specific project need)
+
+Instead — based on what the brand appears to communicate site-wide — the email
+likely contains:
+  - Organizational updates ("what we've been doing")
+  - Geographic or statistical scope claims
+  - A generic "give" button with no framing
+
+3.1 The Donor Journey Problem
+The sequence that converts giving email readers looks like this:
+
+  STORY (specific person or community) -->
+  STAKES (what happens if nothing changes) -->
+  SOLUTION (what FMI is doing about it) -->
+  ROLE (what the donor's gift specifically does) -->
+  ASK (a concrete dollar amount tied to a concrete outcome) -->
+  URGENCY (a reason this matters right now)
+
+If any of those steps is missing or generic, conversion drops. "See. Love.
+Reach." and "However far, however difficult" address only the SOLUTION step.
+The rest of the journey is absent.
+
+3.2 Specific/Concrete Giving Asks
+Research on nonprofit digital fundraising consistently shows that named,
+specific gift amounts tied to specific outcomes outperform generic asks by
+significant margins. Examples of what this looks like:
+
+  "A gift of $35 trains one church leader for an entire month in an unreached
+   village in Southeast Asia."
+
+  "For $120, a missionary couple can cover one month of materials for a new
+   church plant in a closed country."
+
+If FMI's give page and email CTAs say something like "Give to the Global
+Missions Fund" without this kind of specificity, the donor has no emotional
+scaffold for the gift and no way to calibrate what amount is right.
+
+3.3 The Third-Domain Problem on the Give Path
+As noted above, if your emails link to foursquaremissions.com but the actual
+donation form lives at give.foursquare.org, you are losing a measurable
+percentage of donors at the domain transition. Each visual discontinuity
+(different header, different design system, different URL) activates distrust
+and drops off donors who might otherwise complete the gift. This is likely
+contributing to your click-through problem and should be prioritized.
+
+---
+
+SECTION 4: AUDIENCE POSITIONING
+---------------------------------
+
+4.1 Who Is the Assumed Reader?
+The current copy assumes the reader is already a Foursquare church insider —
+someone who knows what "Foursquare" means, has context for the denomination's
+global presence, and is primed to give to the institutional mission arm.
+
+This is a shrinking audience. Most denominational organizations have seen their
+base of committed institutional givers age. Younger donors:
+  - Give to people and stories, not organizations and funds
+  - Are skeptical of large institutional claims without transparent accountability
+  - Want to know specifically what their gift does and how they'll be told about it
+  - Prefer a peer/partner relationship with the organization over a patron/charity one
+
+The current messaging positions FMI as a large institution asking for support.
+Effective conversion messaging positions the DONOR as an active partner in a
+specific mission, with FMI as the vehicle.
+
+4.2 The Urgency Gap
+There is no language in indexed content that creates time-based urgency or
+creates a "cost of inaction" frame. Missions giving appeals that convert well
+include:
+  - A project with a funding deadline
+  - A matching gift opportunity
+  - A specific community/person whose situation changes depending on whether
+    funds arrive
+  - Statistics on unreached peoples that create felt urgency (e.g., "Every day
+    without the gospel in this region is another day these communities have no
+    access to eternal life")
+
+None of that urgency architecture appears to be present in FMI's current
+brand language.
+
+---
+
+SECTION 5: VOICE AND TONE
+--------------------------
+
+Current voice characteristics (based on available copy):
+  - Formal and institutional
+  - Organization-centric ("we are," "FMI is poised," "our network")
+  - Declarative without narrative tension
+  - Reverent but not emotionally engaging
+
+What the voice is missing:
+  - Specificity (real names, real places, real outcomes)
+  - Urgency and stakes
+  - Donor-centricity (the reader as agent, not passive recipient of information)
+  - Warmth at a human scale alongside the global scope
+
+The instinct to lead with scale ("158 countries," "100,000 churches") is
+understandable — it signals credibility. But it inadvertently suppresses
+the emotional engagement that converts readers into donors. The most effective
+missions communications hold these in tension: open with a human story at
+intimate scale, then pull back to reveal the global scope. This sequence —
+personal then universal, not universal then personal — is where the emotional
+arc closes.
+
+---
+
+SECTION 6: PRIORITIZED RECOMMENDATIONS
+----------------------------------------
+
+Priority 1 (Fix Now — Directly Affects Conversion):
+  a) Audit every email CTA. Replace "Give to the Global Missions Fund" with
+     specific outcome-tied asks: "$X does Y for Z person/community." Test two
+     versions in your next email send and measure click-through lift.
+  b) Fix the domain/redirect fragmentation on the giving path. Every donor who
+     leaves your email, lands on foursquaremissions.com, and then gets pushed
+     to give.foursquare.org is a drop-off risk. The give experience must feel
+     continuous with the email and landing page.
+  c) Add one specific human story — name, place, outcome — to every email.
+     One story beats all statistics, every time.
+
+Priority 2 (Fix This Quarter — Foundational Messaging):
+  a) Rewrite the homepage hero from organization-centric to donor-centric.
+     The lead message should answer: "What does my gift make possible today?"
+     not "What is FMI doing?"
+  b) Retire or supplement "Workers wanted" with a giving-specific CTA for
+     the portion of your audience that cannot go but can send.
+  c) Add a concrete giving ladder to the give page:
+       - $35 / month = [specific outcome]
+       - $75 / month = [specific outcome]
+       - $150 / month = [specific outcome]
+     This scaffolds the decision and makes every gift feel purposeful.
+
+Priority 3 (Fix This Year — Structural):
+  a) Develop a brand voice guide that distinguishes insider communications
+     (for churches and long-term partners) from acquisition communications
+     (for new donors and younger audiences). These need different tones.
+  b) Build an urgency architecture into your content calendar: rotating project
+     deadlines, matching gift campaigns, specific country/people-group prayer
+     and giving spotlights with a funding goal and timeline.
+  c) Consider a campaign brand for "See. Love. Reach." that gives it a visual
+     and narrative identity beyond three words — a short documentary series,
+     a specific field story series, or a defined people-group spotlight that
+     makes the tagline tangible.
+
+---
+
+SECTION 7: WHAT IS WORKING
+----------------------------
+
+It would be incomplete to only diagnose problems. The open rates you describe
+suggest:
+  - Your sender reputation is strong (emails are not landing in spam)
+  - Your audience has real affinity for the organization — they open because
+    they care about the mission
+  - Your subject lines or sender names are effective at earning the click
+
+This means you are not starting from a broken relationship. You have attention
+and goodwill. The work is converting that goodwill into action at the moment
+of decision. The brand gap is not at the top of the funnel — it is in the
+middle (the give page and email body copy) and at the bottom (the actual
+giving transaction experience).
+
+---
+
+SECTION 8: DIAGNOSTIC QUESTIONS FOR THE TEAM
+----------------------------------------------
+
+These questions will help you pressure-test the audit findings with your
+internal team:
+
+1. On your last five email campaigns, what was the ratio of organizational
+   update copy to specific human story copy? If it's more than 50% update, that
+   is likely contributing to low click-through.
+
+2. Can you point to a single sentence on your homepage that is addressed to
+   the donor, from the donor's perspective, describing what their gift does?
+
+3. How many steps does it take from clicking a give CTA in an email to
+   completing a gift? If the answer is more than 4 (click, land, choose amount,
+   enter payment), you have friction to remove.
+
+4. Does your give page have a named human story above the giving form? If not,
+   the donor is being asked to give before they've been given a reason.
+
+5. What is the visual/design continuity between your email template, your
+   landing page, and your give form? Are these three experiences clearly from
+   the same organization?
+
+---
+
+NOTE ON AUDIT METHODOLOGY
+--------------------------
+Direct HTTP fetches of foursquaremissions.com and foursquaremissions.org were
+blocked by the network egress proxy in this environment. This audit draws on:
+  - Google search result summaries and indexed page content for the domain
+  - Cached/indexed copy from the FMI homepage, give page, and about page
+  - General research on nonprofit donor behavior and missions communication
+
+Where direct page content was unavailable, findings are framed as hypotheses
+to validate rather than confirmed diagnoses. The team should cross-reference
+each finding against their live site copy.
+
+---
+END OF AUDIT

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Disaster_Type__c</fullName>
+    <label>Disaster Type</label>
+    <required>true</required>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>false</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Complex Emergency</fullName>
+                <default>false</default>
+                <label>Complex Emergency</label>
+            </value>
+            <value>
+                <fullName>Flood</fullName>
+                <default>false</default>
+                <label>Flood</label>
+            </value>
+            <value>
+                <fullName>Persecution</fullName>
+                <default>false</default>
+                <label>Persecution</label>
+            </value>
+            <value>
+                <fullName>Drought</fullName>
+                <default>false</default>
+                <label>Drought</label>
+            </value>
+            <value>
+                <fullName>Extreme Cold</fullName>
+                <default>false</default>
+                <label>Extreme Cold</label>
+            </value>
+            <value>
+                <fullName>Prevention, Preparedness + Training</fullName>
+                <default>false</default>
+                <label>Prevention, Preparedness + Training</label>
+            </value>
+            <value>
+                <fullName>Refugee Care</fullName>
+                <default>false</default>
+                <label>Refugee Care</label>
+            </value>
+            <value>
+                <fullName>Earthquake</fullName>
+                <default>false</default>
+                <label>Earthquake</label>
+            </value>
+            <value>
+                <fullName>Hurricane/Typhoon</fullName>
+                <default>false</default>
+                <label>Hurricane/Typhoon</label>
+            </value>
+            <value>
+                <fullName>Wildfire</fullName>
+                <default>false</default>
+                <label>Wildfire</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

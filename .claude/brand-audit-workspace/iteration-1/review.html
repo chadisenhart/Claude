@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eval Review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --bg: #faf9f5;
+      --surface: #ffffff;
+      --border: #e8e6dc;
+      --text: #141413;
+      --text-muted: #b0aea5;
+      --accent: #d97757;
+      --accent-hover: #c4613f;
+      --green: #788c5d;
+      --green-bg: #eef2e8;
+      --red: #c44;
+      --red-bg: #fceaea;
+      --header-bg: #141413;
+      --header-text: #faf9f5;
+      --radius: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---- Header ---- */
+    .header {
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .header .instructions {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 0.25rem;
+    }
+    .header .progress {
+      font-size: 0.875rem;
+      opacity: 0.8;
+      text-align: right;
+    }
+
+    /* ---- Main content ---- */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* ---- Sections ---- */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .section-header {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .section-body {
+      padding: 1rem;
+    }
+
+    /* ---- Config badge ---- */
+    .config-badge {
+      display: inline-block;
+      padding: 0.2rem 0.625rem;
+      border-radius: 9999px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-left: 0.75rem;
+      vertical-align: middle;
+    }
+    .config-badge.config-primary {
+      background: rgba(33, 150, 243, 0.12);
+      color: #1976d2;
+    }
+    .config-badge.config-baseline {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f57f17;
+    }
+
+    /* ---- Prompt ---- */
+    .prompt-text {
+      white-space: pre-wrap;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    /* ---- Outputs ---- */
+    .output-file {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .output-file + .output-file {
+      margin-top: 1rem;
+    }
+    .output-file-header {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .output-file-header .dl-btn {
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      cursor: pointer;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 500;
+      opacity: 0.8;
+    }
+    .output-file-header .dl-btn:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    .output-file-content {
+      padding: 0.75rem;
+      overflow-x: auto;
+    }
+    .output-file-content pre {
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+    }
+    .output-file-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+    .output-file-content iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
+    .output-file-content table {
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      width: 100%;
+    }
+    .output-file-content table td,
+    .output-file-content table th {
+      border: 1px solid var(--border);
+      padding: 0.375rem 0.5rem;
+      text-align: left;
+    }
+    .output-file-content table th {
+      background: var(--bg);
+      font-weight: 600;
+    }
+    .output-file-content .download-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    .output-file-content .download-link:hover {
+      background: var(--border);
+    }
+    .empty-state {
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    /* ---- Feedback ---- */
+    .prev-feedback {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.625rem 0.75rem;
+      margin-top: 0.75rem;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .prev-feedback-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.25rem;
+      color: var(--text-muted);
+    }
+    .feedback-textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      resize: vertical;
+      color: var(--text);
+    }
+    .feedback-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .feedback-status {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      min-height: 1.1em;
+    }
+
+    /* ---- Grades (collapsible) ---- */
+    .grades-toggle {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .grades-toggle:hover {
+      color: var(--accent);
+    }
+    .grades-toggle .arrow {
+      margin-right: 0.5rem;
+      transition: transform 0.15s;
+      font-size: 0.75rem;
+    }
+    .grades-toggle .arrow.open {
+      transform: rotate(90deg);
+    }
+    .grades-content {
+      display: none;
+      margin-top: 0.75rem;
+    }
+    .grades-content.open {
+      display: block;
+    }
+    .grades-summary {
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .grade-badge {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .grade-pass { background: var(--green-bg); color: var(--green); }
+    .grade-fail { background: var(--red-bg); color: var(--red); }
+    .assertion-list {
+      list-style: none;
+    }
+    .assertion-item {
+      padding: 0.625rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8125rem;
+    }
+    .assertion-item:last-child { border-bottom: none; }
+    .assertion-status {
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+    .assertion-status.pass { color: var(--green); }
+    .assertion-status.fail { color: var(--red); }
+    .assertion-evidence {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      padding-left: 1.5rem;
+    }
+
+    /* ---- View tabs ---- */
+    .view-tabs {
+      display: flex;
+      gap: 0;
+      padding: 0 2rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .view-tab {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.625rem 1.25rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .view-tab:hover { color: var(--text); }
+    .view-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .view-panel { display: none; }
+    .view-panel.active { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+
+    /* ---- Benchmark view ---- */
+    .benchmark-view {
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .benchmark-table {
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.8125rem;
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+    .benchmark-table th, .benchmark-table td {
+      padding: 0.625rem 0.75rem;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+    .benchmark-table th {
+      font-family: 'Poppins', sans-serif;
+      background: var(--header-bg);
+      color: var(--header-text);
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .benchmark-table tr:hover { background: var(--bg); }
+    .benchmark-table tr.benchmark-row-with { background: rgba(33, 150, 243, 0.06); }
+    .benchmark-table tr.benchmark-row-without { background: rgba(255, 193, 7, 0.06); }
+    .benchmark-table tr.benchmark-row-with:hover { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-without:hover { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-table tr.benchmark-row-avg { font-weight: 600; border-top: 2px solid var(--border); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-with { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-without { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-delta-positive { color: var(--green); font-weight: 600; }
+    .benchmark-delta-negative { color: var(--red); font-weight: 600; }
+    .benchmark-notes {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+    .benchmark-notes h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+    }
+    .benchmark-notes ul {
+      list-style: disc;
+      padding-left: 1.25rem;
+    }
+    .benchmark-notes li {
+      font-size: 0.8125rem;
+      line-height: 1.6;
+      margin-bottom: 0.375rem;
+    }
+    .benchmark-empty {
+      color: var(--text-muted);
+      font-style: italic;
+      text-align: center;
+      padding: 3rem;
+    }
+
+    /* ---- Navigation ---- */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    .nav-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .done-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .done-btn:hover {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .done-btn.ready {
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+    }
+    .done-btn.ready:hover {
+      background: var(--accent-hover);
+    }
+    /* ---- Done overlay ---- */
+    .done-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    .done-overlay.visible {
+      display: flex;
+    }
+    .done-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 2rem 3rem;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+    }
+    .done-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .done-card p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .done-card .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .done-card button {
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    .done-card button:hover {
+      background: var(--bg);
+    }
+    /* ---- Toast ---- */
+    .toast {
+      position: fixed;
+      bottom: 5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .toast.visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" style="height:100vh; display:flex; flex-direction:column;">
+    <div class="header">
+      <div>
+        <h1>Eval Review: <span id="skill-name"></span></h1>
+        <div class="instructions">Review each output and leave feedback below. Navigate with arrow keys or buttons. When done, copy feedback and paste into Claude Code.</div>
+      </div>
+      <div class="progress" id="progress"></div>
+    </div>
+
+    <!-- View tabs (only shown when benchmark data exists) -->
+    <div class="view-tabs" id="view-tabs" style="display:none;">
+      <button class="view-tab active" onclick="switchView('outputs')">Outputs</button>
+      <button class="view-tab" onclick="switchView('benchmark')">Benchmark</button>
+    </div>
+
+    <!-- Outputs panel (qualitative review) -->
+    <div class="view-panel active" id="panel-outputs">
+    <div class="main">
+      <!-- Prompt -->
+      <div class="section">
+        <div class="section-header">Prompt <span class="config-badge" id="config-badge" style="display:none;"></span></div>
+        <div class="section-body">
+          <div class="prompt-text" id="prompt-text"></div>
+        </div>
+      </div>
+
+      <!-- Outputs -->
+      <div class="section">
+        <div class="section-header">Output</div>
+        <div class="section-body" id="outputs-body">
+          <div class="empty-state">No output files found</div>
+        </div>
+      </div>
+
+      <!-- Previous Output (collapsible) -->
+      <div class="section" id="prev-outputs-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="togglePrevOutputs()">
+            <span class="arrow" id="prev-outputs-arrow">&#9654;</span>
+            Previous Output
+          </div>
+        </div>
+        <div class="grades-content" id="prev-outputs-content"></div>
+      </div>
+
+      <!-- Grades (collapsible) -->
+      <div class="section" id="grades-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="toggleGrades()">
+            <span class="arrow" id="grades-arrow">&#9654;</span>
+            Formal Grades
+          </div>
+        </div>
+        <div class="grades-content" id="grades-content"></div>
+      </div>
+
+      <!-- Feedback -->
+      <div class="section">
+        <div class="section-header">Your Feedback</div>
+        <div class="section-body">
+          <textarea
+            class="feedback-textarea"
+            id="feedback"
+            placeholder="What do you think of this output? Any issues, suggestions, or things that look great?"
+          ></textarea>
+          <div class="feedback-status" id="feedback-status"></div>
+          <div class="prev-feedback" id="prev-feedback" style="display:none;">
+            <div class="prev-feedback-label">Previous feedback</div>
+            <div id="prev-feedback-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav" id="outputs-nav">
+      <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">&#8592; Previous</button>
+      <button class="done-btn" id="done-btn" onclick="showDoneDialog()">Submit All Reviews</button>
+      <button class="nav-btn" id="next-btn" onclick="navigate(1)">Next &#8594;</button>
+    </div>
+    </div><!-- end panel-outputs -->
+
+    <!-- Benchmark panel (quantitative stats) -->
+    <div class="view-panel" id="panel-benchmark">
+      <div class="benchmark-view" id="benchmark-content">
+        <div class="benchmark-empty">No benchmark data available. Run a benchmark to see quantitative results here.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Done overlay -->
+  <div class="done-overlay" id="done-overlay">
+    <div class="done-card">
+      <h2>Review Complete</h2>
+      <p>Your feedback has been saved. Go back to your Claude Code session and tell Claude you're done reviewing.</p>
+      <div class="btn-row">
+        <button onclick="closeDoneDialog()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ---- Embedded data (injected by generate_review.py) ----
+    const EMBEDDED_DATA = {"skill_name": "brand-audit", "runs": [{"id": "eval-0-with_skill", "prompt": "Can you audit our brand? Here's our website: https://foursquaremissions.com \u2014 I feel like our messaging isn't landing but I can't pinpoint why. Our emails get decent open rates but almost nobody clicks through to give.", "eval_id": 0, "outputs": [{"name": "audit.txt", "type": "text", "content": "\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nBRAND AUDIT: Foursquare Missions International (FMI)\nAudited URL: foursquaremissions.com / foursquaremissions.org\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nNOTE ON URL: The user-provided URL (foursquaremissions.com) redirects to or\ncorresponds with foursquaremissions.org, which is the live indexed site with\nactive pages. The .com domain itself returned no indexable content in search.\nIf .com is a separate microsite or redirect, that split itself is worth\nauditing \u2014 donors who land on the wrong domain and hit a dead end do not give.\nAll findings below are based on foursquaremissions.org content and publicly\nindexed material.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nOVERALL SCORE: 19/40   GRADE: D\n\n[A = 36-40 | B = 29-35 | C = 21-28 | D = 13-20 | F = 12 or below]\n\n\u2501\u2501\u2501 EXECUTIVE SUMMARY \u2501\u2501\u2501\n\nFMI's strongest asset is a warm email list \u2014 people are opening because they\nalready care about missions. The structural problem is that the messaging\narchitecture was built to recruit missionaries and retain denominational\ninsiders, not to move a general donor to click and give. The CTAs are vague,\nthe giving page describes fund mechanics instead of human outcomes, and the\nhomepage hero targets the wrong audience entirely. The single highest-leverage\nfix is rewriting the giving page with a specific anchored ask, a concrete\ndollar-to-outcome statement, and one deadline \u2014 because that is the page where\nwarm, engaged email readers are landing and leaving without giving.\n\n\u2501\u2501\u2501 SCORECARD \u2501\u2501\u2501\n\nDimension                  | Score | Verdict\n---------------------------|-------|--------------------------------------------------\n1. Hook Strength           |   2   | Institutional openers; org is always the subject\n2. Messaging Clarity       |   3   | Core idea is legible but insider language obscures it\n3. CTA Effectiveness       |   2   | No amount, no deadline, no outcome \u2014 multiple competing asks\n4. Psychological Levers    |   2   | Authority only; six levers sitting untouched\n5. Audience Precision      |   2   | Recruits missionaries on a donor page; speaks to everyone\n6. Voice Consistency       |   3   | Faith vocabulary is consistent; register is not\n7. Channel Coverage        |   3   | Channels exist but do not form a funnel\n8. Strategic Blind Spots   |   2   | Audience identity crisis is the root of every other problem\n\n\u2501\u2501\u2501 DETAILED FINDINGS \u2501\u2501\u2501\n\n-- DIMENSION 1: HOOK STRENGTH (2/5) --\n\n- Homepage hero headline: \"Workers wanted to boldly bring the gospel of Jesus\n  to every person on Earth.\" The org is the subject. A stranger reads this and\n  learns what FMI wants, not why it should matter to them. The \"workers wanted\"\n  framing is recruitment copy positioned as the first thing every visitor \u2014\n  including donors \u2014 encounters.\n\n- Instagram bio (@foursquaremissions, 2,217 followers): \"FMI is taking the\n  whole gospel to the whole world, until all have heard.\" The org is the subject\n  in three consecutive words. No tension. No specific person or place. A reader\n  can scroll past this in under one second.\n\n- Facebook: \"No place is beyond God's reach\" (found in a post). This is warmer\n  and more evocative, but it is a theological platitude \u2014 there is no tension, no\n  forward pull, nothing that makes you need to know what comes next.\n\n- \"See. Love. Reach.\" \u2014 this three-word tagline is more structurally interesting\n  but functions as a slogan, not a hook. It does not open a question or name a\n  tension a reader wants resolved.\n\n- No email subject lines are publicly indexed, but the user reports decent open\n  rates and near-zero click-through. This is consistent with hooks that earn an\n  open (the sender's name and mission topic are enough for warm subscribers) but\n  body copy that does not sustain the pull into a CTA.\n\n- No piece of found copy opens with a named individual, a specific crisis moment,\n  or a counterintuitive claim. Every opener is either the org stating its own\n  purpose or a broad theological declaration.\n\n-- DIMENSION 2: MESSAGING CLARITY (3/5) --\n\n- The core idea \u2014 sending missionaries to people who have never heard the Gospel\n  \u2014 is understandable after reading multiple pages. But it is not instantly clear\n  from any single channel in five seconds.\n\n- Four different framings compete for the primary message slot:\n  (1) \"Workers wanted to boldly bring the gospel of Jesus to every person on Earth\"\n  (2) \"FMI is taking the whole gospel to the whole world, until all have heard\"\n  (3) \"See. Love. Reach.\" (the giving campaign framing)\n  (4) \"Crossing barriers to get the gospel to unreached people and places\"\n  These are not contradictory, but they are not one tight message either. A donor\n  who reads the email, then visits the homepage, then clicks to Give encounters\n  three different framings and never hears the same sentence twice.\n\n- Insider vocabulary runs throughout donor-facing copy: \"FMI,\" \"GMF\" (Global\n  Missions Fund), \"unreached people groups,\" \"indigenous movements,\" \"Great\n  Commission,\" \"sending churches,\" \"mobilizers.\" A Foursquare church member\n  likely knows most of these. A donor referred by a friend, or someone who found\n  FMI through social, is lost within 15 seconds.\n\n- The Global Missions Fund \u2014 apparently FMI's primary giving vehicle \u2014 is\n  described as: \"supports key regional leaders worldwide, allowing them to direct\n  their full attention to expansion of church movements, partnership toward\n  indigenous leadership, and the needs of nations with unreached people and\n  places.\" This sentence describes an organizational structure. It does not\n  describe a human outcome.\n\n- The connection between FMI and The Foursquare Church denomination is unclear\n  to outsiders. Is FMI independent? Is it a department of the denomination? Does\n  giving to FMI go to the same place as giving to a local Foursquare church? The\n  answer probably exists somewhere on the site; it is not surfaced clearly in any\n  donor-facing copy.\n\n-- DIMENSION 3: CTA EFFECTIVENESS (2/5) --\n\n- The primary giving CTA found indexed: \"Give now to FMI's Global Missions Fund.\"\n  No amount anchored. No deadline stated. No concrete outcome tied to the gift\n  (no \"$50 trains a local leader\" or \"$25/month funds one month of field work\").\n  A motivated donor clicks through and has no idea what a meaningful gift looks\n  like.\n\n- Multiple competing giving destinations exist: foursquaremissions.org/give/,\n  give.foursquare.org/give/f4318499/, give.foursquare.org/campaign/\n  foursquare-missions-international/c454031/, and the \"See. Love. Reach.\"\n  campaign page. A donor clicking from email to \"give\" may land on any of these\n  and encounter a different page with different framing. Splitting the ask splits\n  the conversion.\n\n- The site's navigation presents four parallel primary actions: Give, Go, Pray,\n  Send. These are not sequenced or prioritized for a donor. A first-time visitor\n  with money to give has to self-select their path from four equally-weighted\n  options.\n\n- No urgency mechanism is visible in any indexed giving copy: no match deadline,\n  no campaign goal thermometer, no \"X days left,\" no \"we're $12,000 short of our\n  goal.\" Without a reason to act today, a warm reader who intended to give can\n  close the tab and never return.\n\n- The \"Wanted\" page CTA for missionary recruiters: \"Fill out this form, and an\n  FMI representative will reach out.\" Generic. No clear next step. No\n  differentiation between the form a potential missionary fills out and the form\n  a \"mobilizer\" (pastor) fills out.\n\n-- DIMENSION 4: PSYCHOLOGICAL LEVERS (2/5) --\n\nLevers in use:\n\n  Authority: USED \u2014 \"Since 1924,\" 100-year history, 158 nations/territories,\n  100,000+ churches in partnership, 300+ missionary workers. This is the\n  dominant lever and it is deployed consistently.\n\n  Story: PARTIAL \u2014 \"See. Love. Reach.\" has narrative structure and the copy\n  references \"unreached people groups in closed nations.\" But story requires a\n  named individual with a specific before/after arc. No named person appears in\n  any indexed FMI donor-facing copy. Collective story (\"unreached people groups\")\n  is not the same thing as a story.\n\n  Urgency: NOT USED \u2014 No deadline, no match expiration, no campaign close date\n  in any indexed material. \"Until all have heard\" expresses eternal urgency but\n  not actionable urgency.\n\n  Scarcity: NOT USED \u2014 No \"only X spots remain,\" no \"this match ends Friday,\"\n  no limited-time framing of any kind.\n\n  Social Proof: NOT USED \u2014 FMI has 13,288 Facebook followers and a network of\n  100,000+ churches. Neither of these is deployed as social proof for donors.\n  \"Join 13,000 people who support FMI\" or \"4,200 donors gave last year to reach\n  closed nations\" \u2014 neither framing appears in indexed copy. Organizational\n  scale is cited (authority), but donor community size is not.\n\n  Reciprocity: NOT USED \u2014 Prayer guides exist on the site, but there is no\n  evidence of a free resource delivered before the ask. No field-report PDF, no\n  \"here's what's happening in one village right now\" email before the donate\n  ask. The relationship goes directly to the ask.\n\n  Identity: NOT USED \u2014 No \"you are the kind of person who...\" framing. No copy\n  that positions giving to FMI as an expression of who the donor already\n  believes themselves to be.\n\n  Belonging: NOT USED \u2014 \"Foursquare family\" language appears in broader\n  Foursquare church contexts but is not leveraged in FMI donor copy. Donors are\n  not invited into a named community of supporters. There is no insider identity\n  for regular FMI donors equivalent to \"FMI Partner\" or similar.\n\nLevers being left on the table:\n\n  Social Proof \u2014 FMI has the numbers to use this (100,000 churches, 300+\n  workers, years of history). Reformatting organizational scale into donor\n  community proof (\"join 8,000 monthly givers\") would lower the decision barrier\n  for fence-sitters.\n\n  Urgency \u2014 The single fastest mechanism to lift click-to-give conversion from\n  email. Every send should include a reason to act before the next send arrives.\n\n  Identity \u2014 Faith-based donors often give because of who they believe God has\n  called them to be, not just what the org does. \"People like you don't just\n  pray for the unreached \u2014 they act\" is a different ask than \"give to the GMF.\"\n\n  Belonging \u2014 FMI's best donors are probably deeply embedded in the Foursquare\n  church community. A named inner circle (\"FMI Partners,\" \"Frontline Givers\")\n  with exclusive updates from the field would deepen retention and upgrade\n  giving.\n\n  Reciprocity \u2014 A prayer guide, a quarterly field letter from a specific\n  missionary, a \"here's one thing happening this week in Southeast Asia\" email\n  \u2014 all of these give before asking and build the trust that turns opens\n  into clicks.\n\n-- DIMENSION 5: AUDIENCE PRECISION (2/5) --\n\n- The homepage hero \u2014 \"Workers wanted\" \u2014 is explicitly addressed to potential\n  missionaries. Donors who land on the homepage see recruiting copy. This is the\n  most concrete symptom of the audience confusion: the person FMI needs to click\n  a CTA is reading copy meant for someone who wants to move overseas.\n\n- The site appears to serve at minimum four distinct audiences simultaneously:\n  potential missionaries (Go, Wanted, Long-Term, Short-Term pages), current\n  denominational donors (Give, GMF), church pastors (Sending, Mobilizers\n  section), and prayer partners (Pray page). No segmented entry points are\n  visible. All four land on the same homepage.\n\n- \"Everyone can make a difference\" is not present verbatim, but the structure\n  of the site \u2014 \"You can Give, Go, Pray, or Send\" \u2014 functions identically. It\n  addresses four types of engagement simultaneously rather than leading any one\n  type of person down a clear path.\n\n- The copy assumes the reader already cares about the Great Commission. The\n  \"Why Missions?\" page exists, which suggests FMI knows it needs to earn that\n  caring \u2014 but it is a secondary page, not the entry point. A first-time visitor\n  from a social share who is spiritually curious but not already missions-\n  committed hits the \"Workers wanted\" hero and either self-selects into the\n  missionary path (small pool) or leaves (everyone else).\n\n- No segmentation between cold audience and warm donors is visible. The person\n  who subscribed to the email list last week and the 10-year monthly donor get\n  the same message.\n\n-- DIMENSION 6: VOICE CONSISTENCY (3/5) --\n\n- The faith vocabulary is consistent across channels: \"gospel,\" \"nations,\"\n  \"unreached,\" \"disciples,\" \"Great Commission.\" This is the skeleton of a voice.\n\n- But the register shifts considerably depending on where you look:\n  - Instagram bio: punchy, slogan-tight (\"taking the whole gospel to the whole\n    world, until all have heard\")\n  - Homepage hero: slightly formal, recruitment-framed (\"Workers wanted to\n    boldly bring the gospel of Jesus to every person on Earth\")\n  - GMF giving page: bureaucratic, committee-memo register (\"supports key\n    regional leaders worldwide, allowing them to direct their full attention to\n    expansion of church movements, partnership toward indigenous leadership\")\n  - \"See. Love. Reach.\" campaign: aspirational, poetic (\"God sees the spiritually\n    lost and invites us to see the world as He does: with compassion for the\n    lost and courage to act\")\n  - \"Wanted\" page: warmer, conversational (\"courageous couples, brave\n    individuals, skilled workers and daring families who are unafraid to follow\n    God's call, no matter the cost\")\n\n- A donor who receives an email (likely written in one register), clicks to the\n  giving page (bureaucratic GMF copy), and then checks Instagram (punchy bio)\n  would not immediately recognize these as one organization's voice.\n\n- The shift between \"aspirational missions voice\" and \"organizational\n  administrative voice\" is the most damaging inconsistency \u2014 because the\n  administrative voice shows up exactly where the donor is making a decision.\n\n-- DIMENSION 7: CHANNEL COVERAGE (3/5) --\n\n- Website: Active, multiple pages, appears functional. Mobile and SEO status\n  cannot be confirmed from available data.\n\n- Email: Active. User reports decent open rates, near-zero click-through. List\n  exists and is warm. The channel is working at the awareness layer and failing\n  at the conversion layer.\n\n- Facebook: 13,288 likes / 232 currently talking = ~1.7% engagement rate. For\n  context, average Facebook page engagement is 1-2%. FMI is at the floor of\n  acceptable, not above it. The community is large enough to leverage but is\n  not being activated.\n\n- Instagram: @foursquaremissions \u2014 2,217 followers, 585 posts. The post volume\n  (585) is high relative to the follower count. Volume is not compensating for\n  reach. No evidence of a growth strategy visible in indexed data.\n\n- Video: Referenced in foursquare.org resources (\"Go with Foursquare Missions\n  International\" video, \"Give with FMI\" video), but whether these are actively\n  promoted or primarily exist as reference content is unclear.\n\n- Short-form video (Reels, Shorts): No evidence of an active short-form video\n  presence. If FMI's target donor is under 50, this is a meaningful gap.\n\n- Direct mail / print: Not evident in any indexed materials. Church kits and\n  connection offering materials exist (Foursquare Connection 2026 in San Antonio\n  referenced a missions offering), but these appear to be denominational\n  distribution, not FMI-controlled direct mail.\n\n- Cross-channel path: Social posts appear to link to the website; the website\n  collects email subscribers; email sends drives (in theory) to giving pages.\n  The architecture exists but the conversion layer (email to give) is failing,\n  which suggests the problem is in the ask mechanics, not the channel structure.\n\n-- DIMENSION 8: STRATEGIC BLIND SPOTS (2/5) --\n\nBlind spot 1 \u2014 The missionary/donor channel collision:\nFMI's highest-traffic entry point (homepage) is optimized for missionary\nrecruitment. The homepage hero is a job posting. The \"Wanted,\" \"Go,\" and\nsending-church pages reflect significant investment. This is appropriate if the\ntop priority is deploying missionaries. It is the wrong funnel if the problem\nis donor click-through. The org may not have consciously decided which audience\nowns the homepage, and so it serves neither audience well.\n\nBlind spot 2 \u2014 Organizational metrics masquerading as donor impact:\n\"158 nations,\" \"100,000 churches,\" \"300+ workers,\" \"since 1924\" \u2014 these are\nauthority signals, not impact statements. They tell a donor how big FMI is, not\nwhat a donor's gift does. There is a consistent pattern across all channels of\nleading with organizational scale rather than human outcome. A donor asking\n\"what does my $100 do?\" cannot answer that question from any indexed FMI copy.\n\nBlind spot 3 \u2014 Treating opens as a conversion signal:\nDecent email open rates feel like success. They are not. Open rates measure\nsubject line performance and sender trust \u2014 both of which may be working fine.\nThe problem is in the email body and the destination page. An org that sees\ngood opens and attributes the lack of clicks to \"messaging not landing\" is\nlooking at the symptom (clicks) and diagnosing the wrong component (messaging\ngenerally). The specific failure is: no specific ask, no deadline, and a\ngiving page that cannot answer \"why now?\" or \"what exactly will this do?\"\n\n\u2501\u2501\u2501 PSYCHOLOGICAL LEVERS IN USE \u2501\u2501\u2501\n\nUrgency \u2717 | Scarcity \u2717 | Social Proof \u2717 | Authority \u2713\nReciprocity \u2717 | Identity \u2717 | Belonging \u2717 | Story (partial) \u2713\n\nLevers being left on the table:\n\n  Social Proof \u2014 FMI has a large network (100,000 partner churches, 13,000+\n  Facebook followers). Reframing this as donor community size (\"join 8,000\n  people who give monthly to reach the unreached\") changes a statistic into\n  an invitation.\n\n  Urgency \u2014 The fastest mechanism to lift email-to-give conversion. Quarterly\n  matched giving windows, campaign goal thermometers, or end-of-year deadlines\n  give warm readers a reason to click today rather than next week (which means\n  never).\n\n  Scarcity \u2014 Limited GO Team slots, missionary deployment windows closing,\n  or a giving match with a hard cap \u2014 all of these create real scarcity that\n  already exists in FMI's programs. Naming it explicitly is not manipulation;\n  it is honest communication about how missions deployment works.\n\n  Identity \u2014 Faith donors give from identity (\"I am someone who believes the\n  unreached deserve to hear the Gospel, and that means I have to do something\").\n  No copy addresses the donor's sense of who they are or who they want to be.\n\n  Belonging \u2014 Regular, committed donors to a missions org want to feel like\n  insiders. A named community tier, exclusive field updates, and language that\n  separates \"our people\" from the general public would increase both retention\n  and upgrade giving.\n\n  Reciprocity \u2014 Deliver something of value before the ask: a quarterly printed\n  field letter from a named missionary, a prayer guide tied to a specific\n  unreached people group, a short video of life in a village FMI serves.\n  Reciprocity lowers the psychological barrier between reading and clicking.\n\n\u2501\u2501\u2501 PRIORITY FIX LIST \u2501\u2501\u2501\n\nRanked by estimated impact (high impact + low effort at the top):\n\n1. Rewrite the giving page with a specific anchored ask and one deadline.\n   This is the direct cause of \"nobody clicks through to give.\" The current\n   giving page describes fund mechanics, not outcomes. Replace \"supports key\n   regional leaders worldwide, allowing them to direct their full attention to\n   expansion of church movements\" with something like: \"Your gift of $75 funds\n   one month of field expenses for a missionary family in a closed nation.\"\n   Add a deadline or a match. Give donors a reason to act before closing the\n   tab. This is the highest-leverage change in the audit because it is the\n   page where warm, engaged email readers arrive and leave without converting.\n   Cost to fix: one afternoon of copy revision. Cost to ignore: every email\n   that earns an open but no gift.\n\n2. Add urgency to every email CTA.\n   Decent open rates with near-zero click-through means the audience is warm\n   but the ask is not doing its job. Every email should include at minimum one\n   of: a deadline (\"match expires Sunday\"), a campaign goal (\"we're $4,200\n   from our goal\"), or a time-sensitive story (\"a GO Team deploys in 11 days\n   and needs $3,000 more to go\"). The subject line earns the open; urgency in\n   the body earns the click. Without it, every send is an announcement that the\n   reader can admire and close.\n\n3. Create a separate donor homepage entry point (or a donor-specific email\n   landing page).\n   The current homepage hero recruits missionaries. The email list is\n   (presumably) donors. These audiences need different entry experiences. At\n   minimum, every fundraising email should link to a dedicated landing page \u2014\n   not the general homepage \u2014 with one message, one story, one ask, one button.\n   No navigation. No competing paths. This can be built as a simple campaign\n   page and will outperform the general homepage for donation conversion\n   immediately.\n\n4. Add one named individual story to every major donor touchpoint.\n   The largest psychological lever FMI is leaving unused is specific story.\n   \"Unreached people groups in closed nations\" is a category. A named person\n   in a named country with a before/after moment is a story. Story does not\n   require a case study \u2014 one paragraph with a name, a country, and a single\n   moment of change is enough to shift the emotional register of a giving ask.\n   This costs one interview with one field worker per quarter.\n\n5. Strip insider language from donor-facing copy.\n   \"GMF,\" \"FMI,\" \"indigenous movements,\" \"unreached people groups,\" \"Great\n   Commission,\" \"mobilizer,\" \"sending church\" \u2014 audit every piece of donor-\n   facing copy for these terms and replace each one with plain language.\n   \"Indigenous movements\" = \"local church networks led by local people.\"\n   \"Unreached people groups\" = \"communities who have never heard the Gospel.\"\n   The Foursquare insider reading this already knows what these terms mean; the\n   Foursquare adjacent donor who gave once in 2021 and is now reading an email\n   does not. Write for the latter.\n\n6. Deploy social proof on the giving page and in emails.\n   FMI has the numbers: 13,000+ Facebook followers, 100,000 partner churches,\n   100 years of presence. These are organizational authority stats. Convert them\n   into donor community proof: \"4,800 people gave to FMI last year to reach\n   closed nations. Add your name.\" This is a one-line copy change on the giving\n   page and a one-line addition to each email. It changes the ask from\n   institutional (\"support this org\") to communal (\"join these people\").\n\n7. Consolidate giving destinations to one URL.\n   Three or more active giving URLs (foursquaremissions.org/give, two\n   give.foursquare.org pages, the See Love Reach campaign) split traffic,\n   split reporting, and create a disjointed donor experience. Choose one\n   canonical giving URL, redirect everything else to it, and make that page\n   the only destination emails point to. This also consolidates tracking so\n   you can actually see what is working.\n\n8. Establish a pre-ask reciprocity touchpoint in email.\n   For new email subscribers and lapsed donors, build a short welcome or re-\n   engagement sequence that delivers value before the first ask: a field story,\n   a prayer guide for a specific region, a short video from a missionary.\n   FMI's give page notes prayer guides exist \u2014 deploy them as the first thing\n   a new subscriber receives, not as a buried site resource. Three emails of\n   value before the first direct ask would likely lift click-through rates on\n   subsequent giving emails measurably.\n\n\u2501\u2501\u2501 STRATEGIC DIAGNOSIS \u2501\u2501\u2501\n\nThe root cause connecting every weak score in this audit is an audience\nidentity crisis that has been baked into FMI's messaging architecture. The\norg built its digital presence to serve three audiences at once \u2014 potential\nmissionaries, denominational donors, and church pastors considering sending\npartnerships \u2014 without clearly deciding which audience owns which channel or\nwhich page. The result is a homepage hero that recruits workers (targeting a\nsmall pool), a giving page that describes organizational structures (targeting\nno one specifically), and an email list of warm supporters who open every send\nand click nothing. The messaging is not the problem. The architecture is.\n\nThe email open rates are the most important data point in this audit. They\ntell you the audience is there, they trust the sender, and they are willing\nto give their attention. The near-zero click-through tells you the ask is not\nearning action \u2014 not because the cause is unappealing, but because the ask\nnever gives a specific person a specific reason to act right now. Fixing that\none conversion layer \u2014 from email body to giving page \u2014 with a specific dollar\namount, a named human story, an urgency mechanism, and a single CTA does not\nrequire a rebrand. It requires a clear-eyed decision about who FMI is talking\nto when it asks for money, followed by copy that actually speaks to that person.\nEverything else in this fix list is secondary to that decision.\n"}], "grading": null}, {"id": "eval-0-without_skill", "prompt": "Can you audit our brand? Here's our website: https://foursquaremissions.com \u2014 I feel like our messaging isn't landing but I can't pinpoint why. Our emails get decent open rates but almost nobody clicks through to give.", "eval_id": 0, "outputs": [{"name": "audit.txt", "type": "text", "content": "FOURSQUARE MISSIONS BRAND AUDIT\n================================\nAuditor: Claude (claude-sonnet-4-6)\nDate: 2026-08-21\nSite reviewed: foursquaremissions.com / foursquaremissions.org\nMethod: Network egress restrictions blocked direct page fetches; audit draws on\n        search engine cached content, indexed page summaries, and structured\n        web search results. All quoted copy is sourced from those results.\n\nEXECUTIVE SUMMARY\n-----------------\nFMI has a real problem that many established ministry organizations share: the\nbrand speaks primarily TO insiders and ABOUT the organization, not TO potential\ndonors and ABOUT what their gift will accomplish. The result is exactly the\nsymptom you described \u2014 people are intrigued enough to open your emails (the\nsubject line or sender name earns the click), but when they arrive they don't\nfind a compelling enough reason to convert.\n\nThe core issue is not awareness. It is conversion friction created by\norganization-centric messaging, vague calls to action, and an emotional arc\nthat never closes on the donor.\n\n---\n\nSECTION 1: BRAND IDENTITY\n--------------------------\n\n1.1 Name and URL Discrepancy\nThe organization appears to operate across at least two domains:\n  - foursquaremissions.com (the URL you referenced)\n  - foursquaremissions.org (what search results return for the canonical site)\n  - give.foursquare.org (the actual donation processing page)\n\nThis is a brand integrity problem. Donors who click from an email, land on one\ndomain, and then find themselves redirected to a third domain for the actual\ngiving transaction face trust friction at the most critical moment. Each\nredirect is an opportunity for drop-off, and each different-looking domain\nsignals fragmentation rather than organizational confidence. Unify under a\nsingle domain or make the give.foursquare.org experience visually seamless\nwith the main brand.\n\n1.2 Organizational Identity\nFMI presents itself as a large, established, globally scaled organization:\n  - 158 countries and territories\n  - Partnership with 100,000+ churches\n  - Decades of history under the Foursquare Church umbrella\n\nScale is real credibility \u2014 but it is being deployed incorrectly. Large numbers\ncreate awe, not urgency. A donor who reads \"100,000 churches in 158 countries\"\ndoes not think \"my gift matters here.\" They think \"this is a massive operation\nthat doesn't need me.\" Scale copy needs to be paired immediately with specific,\npersonal impact stories that prove an individual gift still moves the needle.\n\n---\n\nSECTION 2: MESSAGING ANALYSIS\n------------------------------\n\n2.1 The Mission Statement / Homepage Positioning\nFrom indexed content, the homepage lead message is approximately:\n\n  \"Poised to take part in ensuring every person in the world hears the gospel\n   of Jesus Christ. However far, however difficult it may be, we're ready to go.\"\n\nDiagnosis:\n  - Subject is \"we\" (the organization), not \"you\" (the donor).\n  - \"Poised to take part\" is passive and bureaucratic. It hedges commitment\n    rather than asserting it.\n  - \"However far, however difficult\" communicates organizational grit, which\n    is admirable, but it does not answer the donor's implicit question:\n    \"What happens because of my gift?\"\n  - There is no tension or stakes. Good missionary communication creates a\n    felt need \u2014 a picture of people unreached, communities without the gospel,\n    a problem that exists right now \u2014 before presenting the solution. This copy\n    goes straight to solution without establishing the problem.\n\nReframe test: What if the opening line positioned the donor as the hero?\n  Instead of: \"We're ready to go.\"\n  Consider: \"There are 3.4 billion people who have never once heard the name\n             of Jesus. They won't hear it unless someone goes. You can send\n             someone today.\"\n\n2.2 The \"Workers Wanted\" Call to Action\nThis CTA was found in search-indexed homepage content.\n\nDiagnosis:\n  - \"Workers wanted\" is an internal recruitment phrase, not a donor-facing CTA.\n  - It implies a volunteer/missionary ask, not a giving ask. A donor who is\n    not planning to go on the field reads this as \"not for me.\"\n  - For a giving page, this language creates a disconnect: the visitor thinks\n    they've landed on a jobs board, not a place to partner financially.\n  - The phrase also carries dated mid-century mission-agency connotations.\n    It does not resonate with younger donors (Millennials, Gen Z) who are\n    skeptical of institutional language and respond better to direct,\n    outcome-framed asks.\n\n2.3 The \"See. Love. Reach.\" Initiative Tagline\nThis three-word tagline describes FMI's approach to unreached people groups.\n\nDiagnosis:\n  - Internally meaningful, externally opaque. Taglines that compress a\n    philosophy into three words require significant brand education before they\n    communicate anything. Without that education, a new visitor sees three\n    generic verbs.\n  - Compare to how effective nonprofit taglines work: they either describe an\n    outcome (\"Ending hunger. Now.\" \u2014 direct, results-oriented) or evoke a\n    felt experience (\"Until there's a cure\" \u2014 emotional, urgent). \"See. Love.\n    Reach.\" does neither without explanation.\n  - The tagline is not a problem to fix so much as a framing to supplement.\n    It should always appear with a single explanatory sentence that makes the\n    mission concrete and stakes-driven.\n\n2.4 The Global Missions Fund Description\nFrom indexed content:\n\n  \"The Global Missions Fund is independently funded by tax-deductible\n   individual and church donations that support the development of a network\n   of more than 100,000 churches and gatherings in 157 nations and territories.\"\n\nDiagnosis:\n  - This is a legal/accounting description, not a giving appeal.\n  - \"Development of a network\" is organizational inside-speak. Donors give to\n    people, not networks.\n  - No human story, no outcome, no urgency. This copy answers the compliance\n    question (\"Is this tax-deductible?\") before it answers the motivation\n    question (\"Why should I care?\").\n  - The \"how to donate\" section (phone numbers, URLs) appears to lead with\n    mechanics before motivation \u2014 a conversion-killer sequence. Motivation\n    must precede mechanics.\n\n---\n\nSECTION 3: THE EMAIL-TO-GIVE CONVERSION PROBLEM\n-------------------------------------------------\n\nYou described good open rates with low give click-through. This is a\nwell-documented pattern in nonprofit email, and it has a clear cause:\n\nThe email earns the open because the sender name (\"Foursquare Missions\") or\nsubject line is recognizable and trusted. But once opened, the reader does not\nfind:\n  (a) a specific, visceral story that makes the need feel real and urgent today\n  (b) a single, clear call to action with a specific dollar amount tied to a\n      specific outcome\n  (c) a reason why NOW matters (deadline, matching gift, specific project need)\n\nInstead \u2014 based on what the brand appears to communicate site-wide \u2014 the email\nlikely contains:\n  - Organizational updates (\"what we've been doing\")\n  - Geographic or statistical scope claims\n  - A generic \"give\" button with no framing\n\n3.1 The Donor Journey Problem\nThe sequence that converts giving email readers looks like this:\n\n  STORY (specific person or community) -->\n  STAKES (what happens if nothing changes) -->\n  SOLUTION (what FMI is doing about it) -->\n  ROLE (what the donor's gift specifically does) -->\n  ASK (a concrete dollar amount tied to a concrete outcome) -->\n  URGENCY (a reason this matters right now)\n\nIf any of those steps is missing or generic, conversion drops. \"See. Love.\nReach.\" and \"However far, however difficult\" address only the SOLUTION step.\nThe rest of the journey is absent.\n\n3.2 Specific/Concrete Giving Asks\nResearch on nonprofit digital fundraising consistently shows that named,\nspecific gift amounts tied to specific outcomes outperform generic asks by\nsignificant margins. Examples of what this looks like:\n\n  \"A gift of $35 trains one church leader for an entire month in an unreached\n   village in Southeast Asia.\"\n\n  \"For $120, a missionary couple can cover one month of materials for a new\n   church plant in a closed country.\"\n\nIf FMI's give page and email CTAs say something like \"Give to the Global\nMissions Fund\" without this kind of specificity, the donor has no emotional\nscaffold for the gift and no way to calibrate what amount is right.\n\n3.3 The Third-Domain Problem on the Give Path\nAs noted above, if your emails link to foursquaremissions.com but the actual\ndonation form lives at give.foursquare.org, you are losing a measurable\npercentage of donors at the domain transition. Each visual discontinuity\n(different header, different design system, different URL) activates distrust\nand drops off donors who might otherwise complete the gift. This is likely\ncontributing to your click-through problem and should be prioritized.\n\n---\n\nSECTION 4: AUDIENCE POSITIONING\n---------------------------------\n\n4.1 Who Is the Assumed Reader?\nThe current copy assumes the reader is already a Foursquare church insider \u2014\nsomeone who knows what \"Foursquare\" means, has context for the denomination's\nglobal presence, and is primed to give to the institutional mission arm.\n\nThis is a shrinking audience. Most denominational organizations have seen their\nbase of committed institutional givers age. Younger donors:\n  - Give to people and stories, not organizations and funds\n  - Are skeptical of large institutional claims without transparent accountability\n  - Want to know specifically what their gift does and how they'll be told about it\n  - Prefer a peer/partner relationship with the organization over a patron/charity one\n\nThe current messaging positions FMI as a large institution asking for support.\nEffective conversion messaging positions the DONOR as an active partner in a\nspecific mission, with FMI as the vehicle.\n\n4.2 The Urgency Gap\nThere is no language in indexed content that creates time-based urgency or\ncreates a \"cost of inaction\" frame. Missions giving appeals that convert well\ninclude:\n  - A project with a funding deadline\n  - A matching gift opportunity\n  - A specific community/person whose situation changes depending on whether\n    funds arrive\n  - Statistics on unreached peoples that create felt urgency (e.g., \"Every day\n    without the gospel in this region is another day these communities have no\n    access to eternal life\")\n\nNone of that urgency architecture appears to be present in FMI's current\nbrand language.\n\n---\n\nSECTION 5: VOICE AND TONE\n--------------------------\n\nCurrent voice characteristics (based on available copy):\n  - Formal and institutional\n  - Organization-centric (\"we are,\" \"FMI is poised,\" \"our network\")\n  - Declarative without narrative tension\n  - Reverent but not emotionally engaging\n\nWhat the voice is missing:\n  - Specificity (real names, real places, real outcomes)\n  - Urgency and stakes\n  - Donor-centricity (the reader as agent, not passive recipient of information)\n  - Warmth at a human scale alongside the global scope\n\nThe instinct to lead with scale (\"158 countries,\" \"100,000 churches\") is\nunderstandable \u2014 it signals credibility. But it inadvertently suppresses\nthe emotional engagement that converts readers into donors. The most effective\nmissions communications hold these in tension: open with a human story at\nintimate scale, then pull back to reveal the global scope. This sequence \u2014\npersonal then universal, not universal then personal \u2014 is where the emotional\narc closes.\n\n---\n\nSECTION 6: PRIORITIZED RECOMMENDATIONS\n----------------------------------------\n\nPriority 1 (Fix Now \u2014 Directly Affects Conversion):\n  a) Audit every email CTA. Replace \"Give to the Global Missions Fund\" with\n     specific outcome-tied asks: \"$X does Y for Z person/community.\" Test two\n     versions in your next email send and measure click-through lift.\n  b) Fix the domain/redirect fragmentation on the giving path. Every donor who\n     leaves your email, lands on foursquaremissions.com, and then gets pushed\n     to give.foursquare.org is a drop-off risk. The give experience must feel\n     continuous with the email and landing page.\n  c) Add one specific human story \u2014 name, place, outcome \u2014 to every email.\n     One story beats all statistics, every time.\n\nPriority 2 (Fix This Quarter \u2014 Foundational Messaging):\n  a) Rewrite the homepage hero from organization-centric to donor-centric.\n     The lead message should answer: \"What does my gift make possible today?\"\n     not \"What is FMI doing?\"\n  b) Retire or supplement \"Workers wanted\" with a giving-specific CTA for\n     the portion of your audience that cannot go but can send.\n  c) Add a concrete giving ladder to the give page:\n       - $35 / month = [specific outcome]\n       - $75 / month = [specific outcome]\n       - $150 / month = [specific outcome]\n     This scaffolds the decision and makes every gift feel purposeful.\n\nPriority 3 (Fix This Year \u2014 Structural):\n  a) Develop a brand voice guide that distinguishes insider communications\n     (for churches and long-term partners) from acquisition communications\n     (for new donors and younger audiences). These need different tones.\n  b) Build an urgency architecture into your content calendar: rotating project\n     deadlines, matching gift campaigns, specific country/people-group prayer\n     and giving spotlights with a funding goal and timeline.\n  c) Consider a campaign brand for \"See. Love. Reach.\" that gives it a visual\n     and narrative identity beyond three words \u2014 a short documentary series,\n     a specific field story series, or a defined people-group spotlight that\n     makes the tagline tangible.\n\n---\n\nSECTION 7: WHAT IS WORKING\n----------------------------\n\nIt would be incomplete to only diagnose problems. The open rates you describe\nsuggest:\n  - Your sender reputation is strong (emails are not landing in spam)\n  - Your audience has real affinity for the organization \u2014 they open because\n    they care about the mission\n  - Your subject lines or sender names are effective at earning the click\n\nThis means you are not starting from a broken relationship. You have attention\nand goodwill. The work is converting that goodwill into action at the moment\nof decision. The brand gap is not at the top of the funnel \u2014 it is in the\nmiddle (the give page and email body copy) and at the bottom (the actual\ngiving transaction experience).\n\n---\n\nSECTION 8: DIAGNOSTIC QUESTIONS FOR THE TEAM\n----------------------------------------------\n\nThese questions will help you pressure-test the audit findings with your\ninternal team:\n\n1. On your last five email campaigns, what was the ratio of organizational\n   update copy to specific human story copy? If it's more than 50% update, that\n   is likely contributing to low click-through.\n\n2. Can you point to a single sentence on your homepage that is addressed to\n   the donor, from the donor's perspective, describing what their gift does?\n\n3. How many steps does it take from clicking a give CTA in an email to\n   completing a gift? If the answer is more than 4 (click, land, choose amount,\n   enter payment), you have friction to remove.\n\n4. Does your give page have a named human story above the giving form? If not,\n   the donor is being asked to give before they've been given a reason.\n\n5. What is the visual/design continuity between your email template, your\n   landing page, and your give form? Are these three experiences clearly from\n   the same organization?\n\n---\n\nNOTE ON AUDIT METHODOLOGY\n--------------------------\nDirect HTTP fetches of foursquaremissions.com and foursquaremissions.org were\nblocked by the network egress proxy in this environment. This audit draws on:\n  - Google search result summaries and indexed page content for the domain\n  - Cached/indexed copy from the FMI homepage, give page, and about page\n  - General research on nonprofit donor behavior and missions communication\n\nWhere direct page content was unavailable, findings are framed as hypotheses\nto validate rather than confirmed diagnoses. The team should cross-reference\neach finding against their live site copy.\n\n---\nEND OF AUDIT\n"}], "grading": null}, {"id": "eval-1-with_skill", "prompt": "Run a brand audit on us. We're a small missions nonprofit, about 15 years old. We raise money for church planters in Southeast Asia. Our donors are mostly older (55+) church members. We don't have a website link but here are two recent email subject lines we used: 'July Prayer Update' and 'Thank you for your partnership.' Our giving page just has a PayPal button.", "eval_id": 1, "outputs": [{"name": "audit.txt", "type": "text", "content": "\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nBRAND AUDIT: [Unnamed Missions Nonprofit \u2014 Southeast Asia Church Planters]\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nOVERALL SCORE: 12/40   GRADE: F\n\n[A = 36\u201340 | B = 29\u201335 | C = 21\u201328 | D = 13\u201320 | F = \u226412]\n\nNOTE ON INPUTS: This audit was conducted with two email subject lines and a\ndescription of the giving page. No website, no email bodies, no social\nprofiles, and no print materials were available. Dimensions that cannot be\nscored from available evidence are marked accordingly. The scores below\nreflect only what can be verified \u2014 they do not assume unseen channels are\nperforming well.\n\n\u2501\u2501\u2501 EXECUTIVE SUMMARY \u2501\u2501\u2501\nYour organization's clearest strength is that you have a specific, real\naudience (55+ church members with an existing relationship to missions) \u2014\nthat is a genuinely workable foundation most orgs do not have. The\nstructural problem is that you are treating every channel as a church\nbulletin: you are informing a constituency rather than moving them toward\naction, and your giving infrastructure (a lone PayPal button) makes it\nnearly impossible for a motivated donor to give with confidence. The\nsingle highest-leverage fix is replacing the PayPal button with a\ndedicated giving page that anchors a dollar amount to a specific outcome \u2014\n\"$75 trains one church planter for one month\" \u2014 because until the ask is\nclear and frictionless, improving anything upstream is wasted effort.\n\n\u2501\u2501\u2501 SCORECARD \u2501\u2501\u2501\nDimension                   | Score | Verdict\n-----------------------------|-------|--------------------------------------------------\n1. Hook Strength            |   1   | Both subject lines are pure announcements; no pull\n2. Messaging Clarity        |   2   | Mission is statable but invisible in channels\n3. CTA Effectiveness        |   1   | PayPal button with no amount, no deadline, no anchor\n4. Psychological Levers     |   2   | Authority and Story implied; six levers untouched\n5. Audience Precision       |   2   | Audience identified but copy not written for them\n6. Voice Consistency        |   2   | Consistently institutional \u2014 consistently weak\n7. Channel Coverage         |   1   | Email + bare giving page; no confirmed web or social\n8. Strategic Blind Spots    |   1   | Email treated as bulletin, not as fundraising channel\n\n\u2501\u2501\u2501 DETAILED FINDINGS \u2501\u2501\u2501\n\n--- DIMENSION 1: HOOK STRENGTH (Score: 1) ---\n\n- \"July Prayer Update\" \u2014 This subject line names the month and the content\n  type. It is a filing-cabinet label, not a hook. It earns nothing. The\n  only reason a recipient opens it is out of habit or obligation, not\n  because the line created any tension or curiosity.\n\n- \"Thank you for your partnership\" \u2014 This is institutional acknowledgment\n  language. \"Partnership\" is a nonprofit abstraction. It signals a\n  transaction is being acknowledged, not that something worth reading is\n  inside. A donor who opens this expects a boilerplate thank-you, and\n  they are probably right.\n\n- Neither subject line names a person, a place, a crisis moment, or a\n  specific outcome. Neither asks anything of the reader or makes them\n  feel anything before they open the email. Both place the organization\n  at the center of the sentence rather than the reader or the beneficiary.\n\n- A subject line like \"July Prayer Update\" is particularly damaging\n  because it trains the reader to treat your email as background noise \u2014\n  something to archive or skim. Once that habit is set, it is very hard\n  to break with a fundraising ask.\n\n- No homepage hook could be assessed due to absence of website URL. This\n  score is based solely on email subject lines. If the homepage hero opens\n  with the organization's name, founding year, or a mission statement, the\n  score would remain 1. If a website is provided in a future audit, this\n  dimension should be re-scored.\n\n--- DIMENSION 2: MESSAGING CLARITY (Score: 2) ---\n\n- The core mission (\"we raise money for church planters in Southeast Asia\")\n  is actually specific enough to be understood in a single sentence \u2014 that\n  is a genuine asset. Most small nonprofits cannot state their focus that\n  cleanly.\n\n- However, none of that clarity appears in the visible channel touchpoints.\n  \"July Prayer Update\" and \"Thank you for your partnership\" could be sent\n  by any church, any mission organization, or any faith-based nonprofit in\n  the world. The subject lines carry zero organizational identity.\n\n- \"Church planters\" is insider vocabulary. For your existing 55+ donor\n  base \u2014 active churchgoers who understand denominational language \u2014 this\n  term works. It would be opaque to anyone outside that world, which\n  limits any organic growth through referral or digital discovery.\n\n- \"Partnership\" appears in the thank-you subject line. This word has been\n  so thoroughly genericized by nonprofit and church communications that it\n  no longer carries meaning. It does not distinguish you from any other\n  organization using it.\n\n- Without access to the website, email body copy, or any other channel,\n  we cannot assess consistency of messaging across touchpoints. The absence\n  of a website URL is itself a messaging clarity signal: if donors cannot\n  find you with a search, or if your web presence is weak, the message\n  cannot travel beyond your existing list.\n\n--- DIMENSION 3: CTA EFFECTIVENESS (Score: 1) ---\n\n- The giving page contains a PayPal button and, based on description,\n  nothing else. There is no stated dollar amount. There is no articulated\n  outcome (\"your gift of $X does Y\"). There is no deadline or urgency\n  mechanism. There is no recurring gift option visible.\n\n- A PayPal button redirects the donor off your page entirely, breaking\n  the trust context established by any communications that brought them\n  there. Research from Donorbox and CauseVox consistently shows that off-\n  site redirect giving flows reduce conversion rates meaningfully compared\n  to embedded or branded giving pages.\n\n- Without suggested amounts anchored to specific impact, donors default to\n  a conservative number they self-select \u2014 typically lower than what they\n  would give if anchored by an organizational suggestion. \"Plant a church\"\n  does not have a price tag in the donor's mind. \"$75 a month trains a\n  church planter\" does.\n\n- There is no evidence of a \"reason to give now\" \u2014 no matching gift, no\n  campaign deadline, no funding gap. Donors who are warm but not urgent\n  have no trigger to act today versus next week versus never.\n\n- The thank-you email subject line (\"Thank you for your partnership\")\n  is a CTA failure in reverse: it closes a giving loop with generic\n  language instead of deepening the relationship toward the next gift. A\n  thank-you email is one of the highest-opened emails any nonprofit sends.\n  This one almost certainly wastes that open.\n\n--- DIMENSION 4: PSYCHOLOGICAL LEVERS (Score: 2) ---\n\n- Authority is likely present in organizational communications (15 years\n  of ministry, field presence in Southeast Asia, number of churches\n  planted). This is the lever most small faith-based organizations lean\n  on by default. It is the least persuasive lever for a warm donor base\n  that already trusts the org.\n\n- Story is suggested by \"Prayer Update\" cadence \u2014 field updates probably\n  include named individuals or specific situations. If so, Story is being\n  used, though likely without a before/after arc or a specific moment of\n  transformation. Prayer updates tend to be informational reports rather\n  than narrative story construction.\n\n- Urgency: No evidence. None of the visible touchpoints creates a deadline\n  or crisis moment.\n\n- Scarcity: No evidence. No \"we have funding for 3 more church planters\n  if we raise $X by month-end\" type framing.\n\n- Social Proof: No evidence. No donor counts, no \"join 450 supporters\"\n  language visible.\n\n- Reciprocity: No evidence. No free resource, no gift before the ask, no\n  story shared as an act of generosity before the donation request.\n\n- Identity: No evidence. No \"you are someone who believes the local church\n  is the hope of the world\" framing that reflects the reader's self-concept\n  back to them.\n\n- Belonging: Weakly present in \"partnership\" language. Not developed into\n  a genuine community identity (\"our family of church-planting supporters,\"\n  insider updates for committed donors, etc.).\n\n--- DIMENSION 5: AUDIENCE PRECISION (Score: 2) ---\n\n- You have identified your audience correctly: 55+ active church members\n  with an existing relationship to missions. That is more audience clarity\n  than most small nonprofits have.\n\n- The visible copy does not speak to that specific person. \"July Prayer\n  Update\" and \"Thank you for your partnership\" are addressed to a\n  distribution list, not to a 60-year-old woman who has been giving to\n  your ministry for eight years and whose church just sent a short-term\n  team to the region. That person has specific motivations, specific\n  language she uses, and specific things that make her feel proud of her\n  involvement. None of that is reflected in the visible copy.\n\n- A 55+ church donor who has given for years does not need to be convinced\n  the mission matters. She needs to feel her specific participation matters.\n  \"Thank you for your partnership\" does not do that. \"Because of you, Dani\n  now leads a congregation of 34 people in Mindanao\" does.\n\n- There is no visible evidence of audience segmentation: new donors vs.\n  multi-year donors, church partners vs. individual supporters, lapsed\n  donors vs. active. A thank-you email and a prayer update arriving in the\n  same format implies everyone is receiving the same message regardless of\n  their relationship stage.\n\n--- DIMENSION 6: VOICE CONSISTENCY (Score: 2) ---\n\n- Insufficient data to assess cross-channel voice consistency. No website\n  body copy, no social posts, no email body copy, no print materials were\n  available for comparison.\n\n- What IS consistent across the two visible subject lines is a formal,\n  institutional register. \"July Prayer Update\" and \"Thank you for your\n  partnership\" share the same tone: correct, formal, appropriate, and\n  completely without personality or warmth. The voice is consistent in\n  that it is consistently generic.\n\n- Consistency of a weak voice is not a strength. It means the organization\n  sounds the same everywhere \u2014 and that sound does not differentiate it\n  from any other small mission nonprofit sending prayer updates and\n  thank-you notes.\n\n- A distinct organizational voice for a faith-based missions nonprofit\n  working with 55+ donors might be: warm but not sentimental, specific\n  about place and people, rooted in the language of the tradition without\n  being inaccessible, and consistently centered on the people being served\n  rather than the organization doing the serving. There is no evidence of\n  a voice this defined.\n\n--- DIMENSION 7: CHANNEL COVERAGE (Score: 1) ---\n\n- Email is confirmed active. The subject lines suggest a regular cadence\n  (monthly prayer updates, transactional acknowledgments). Cadence without\n  strategy is not a channel coverage strength.\n\n- A giving page exists but functions as a dead end: no context, no\n  narrative, no conversion path \u2014 just a redirect button. A page that\n  exists but does not convert is not meaningfully \"covering\" the giving\n  channel.\n\n- No website URL was provided. This either means no website exists,\n  the website is not considered a meaningful channel by the organization,\n  or it was simply not shared. Any of these scenarios is a coverage gap.\n  A 15-year-old nonprofit without a functional website has no discoverable\n  digital presence \u2014 donors cannot forward your link to a friend, a pastor\n  cannot share you with their congregation online, and you have no\n  searchable identity.\n\n- No social presence was mentioned. For a donor base of 55+ church members,\n  Facebook remains the highest-reach platform (Pew Research consistently\n  shows 70%+ of adults over 50 are on Facebook). Absence from Facebook\n  means absence from the organic sharing behavior of your most likely\n  donors.\n\n- No video presence was mentioned. Short-form video from the field (a\n  30-second clip of a church planting moment, a face from Southeast Asia\n  speaking directly to donors) is one of the highest-engagement formats\n  available and is particularly effective at closing the distance between\n  Western donors and overseas beneficiaries.\n\n- The channel footprint visible here is: one email channel (functioning\n  as a church bulletin) and one giving page (functioning as a bare\n  redirect). There is no cross-channel strategy because there are not\n  enough channels to have a strategy between them.\n\n--- DIMENSION 8: STRATEGIC BLIND SPOTS (Score: 1) ---\n\nBlind Spot 1 \u2014 The Prayer Update Is Carrying Work It Cannot Do\nThe \"prayer update\" cadence is common in missions culture and serves a\ngenuine function: it maintains relationship with a constituency that wants\nto feel connected to the work. But when it is the primary or only\nrecurring communication, it trains donors to receive, not to act. Prayer\nand giving become mentally separated. The update is where you inform;\nthe ask arrives separately and feels like a gear shift. The most effective\nmissions communicators weave the ask directly into the update: the story\ncreates the moment, and the moment creates the invitation to participate.\nThis organization appears to be running information emails and transaction\nemails as two separate functions when they should be one continuous motion.\n\nBlind Spot 2 \u2014 The Aging Donor Cliff\nA donor base that is currently 55+ is a donor base that in ten years is\n65+ and in fifteen years has significant attrition through mortality and\nreduced capacity. There is no visible evidence of any strategy to introduce\nthe organization to donors in the 35-54 range \u2014 the adult children of\ncurrent donors, younger adults in the same churches, people who engage\nwith missions content on social platforms. Without acquisition, this\norganization is drawing down a fixed reservoir with no replenishment. The\ncommunications style (formal subject lines, prayer update cadence, no\ndigital discovery path) is optimized for the existing base and invisible\nto anyone outside it.\n\nBlind Spot 3 \u2014 Infrastructure as an Afterthought\nA PayPal button on a giving page is a decision \u2014 either made actively or\nmade by inaction. It signals that the organization has not invested in its\nown giving infrastructure, which signals to the donor (consciously or not)\nthat the organization is small, possibly amateur, and possibly not set up\nto steward gifts at scale. For a 55+ church donor who writes checks to her\nchurch's building fund and expects receipts and accountability, a PayPal\nredirect may trigger genuine hesitation. The giving infrastructure is not\na back-office problem. It is a trust signal.\n\n\u2501\u2501\u2501 PSYCHOLOGICAL LEVERS IN USE \u2501\u2501\u2501\n\nUrgency    [X]  |  Scarcity    [X]  |  Social Proof  [X]  |  Authority  [/]\nReciprocity [X]  |  Identity   [X]  |  Belonging     [/]  |  Story      [/]\n\nKey: [/] = possibly present but underdeveloped  |  [X] = not evident\n\nLevers being left on the table:\n\nURGENCY \u2014 No deadline, no match, no crisis moment is visible in any\ntouchpoint. For a donor base that gives out of relationship and habit,\nurgency feels unnecessary \u2014 until the annual fund comes in short.\nUrgency does not have to be manufactured panic; \"We need to confirm\nfunding for three new church planters by September 30\" is honest and\nspecific.\n\nSCARCITY \u2014 There are real constraints in this work: limited funding\nslots, specific regions where planters are ready to launch but unsponsored.\nNone of that is communicated. \"We have identified four church planters in\nnorthern Thailand who are trained and ready. We have funding for two.\nThe other two will not go unless funding comes in.\" That is honest\nscarcity \u2014 and it is motivating.\n\nSOCIAL PROOF \u2014 How many donors support this organization? How many\nchurches have been planted? How many years of faithful monthly donors?\nAny of these numbers, framed as \"join 340 people who believe...,\" creates\ncommunity pressure in the best sense. Not visible anywhere in current\nmaterials.\n\nRECIPROCITY \u2014 Before asking a cold contact to give, give them something\nfirst: a story, a photo, a voice message from a church planter, a field\njournal excerpt. This organization sends prayer updates \u2014 those could\nfunction as reciprocity gifts if framed as \"we wanted you to see what you\nmade possible\" rather than \"here is our report.\"\n\nIDENTITY \u2014 \"You are someone who believes the local church is the most\npowerful force for change in human history\" is more persuasive than \"your\ngift makes a difference.\" Identity lever says: your giving is an expression\nof who you are, not just a transaction. This is deeply underused in faith-\nbased organizations, where it is most available.\n\nBELONGING \u2014 \"Partnership\" gestures at belonging but does not build it.\nBelonging means: named categories for committed donors, insider language\nfor people at certain giving levels, a sense that there is a circle you\nare inside. A small org with a tight constituency can build this relatively\ncheaply \u2014 a quarterly \"inner circle\" update, a name for the founding donor\ncommunity, a personal note from the field once a year.\n\n\u2501\u2501\u2501 PRIORITY FIX LIST \u2501\u2501\u2501\n\nRanked by estimated impact (high impact, lowest effort = top of list):\n\n1. REPLACE THE PAYPAL BUTTON WITH A DEDICATED GIVING PAGE\n   This is the most urgent fix because every other improvement \u2014 better\n   subject lines, better email copy, better social presence \u2014 funnels\n   traffic toward a dead end. Use a free or low-cost platform (Zeffy,\n   Donorbox, or similar) that allows you to: set suggested amounts with\n   impact anchors (\"$75/month trains one church planter\"), offer recurring\n   giving, collect donor information, and keep the donor on a branded page\n   without an off-site redirect. This alone will improve conversion on\n   your existing traffic without changing a single other thing.\n\n2. REWRITE THE TWO MOST-SENT SUBJECT LINES\n   You have two identifiable email types: the prayer update and the thank-\n   you. Both are being wasted. For the prayer update, the subject line\n   should name a person or a moment: \"Romy planted his 12th church last\n   week\" or \"One question from a new believer in Cebu stopped us cold.\"\n   For the thank-you, it should do work: \"Here's what happened because\n   you gave in June.\" These rewrites cost nothing and can be tested\n   immediately. Even a 5-point lift in open rate on a small list changes\n   the economics of every subsequent ask.\n\n3. ANCHOR EVERY ASK TO A SPECIFIC DOLLAR AMOUNT AND A NAMED OUTCOME\n   \"$75 trains a church planter for one month\" is more persuasive than\n   \"support our mission.\" Pick one or two impact amounts that are honest\n   and specific, and repeat them consistently across every channel: giving\n   page, email asks, any print materials. Donors need to be able to picture\n   what their gift does. Right now they cannot.\n\n4. ADD ONE URGENCY MECHANISM TO EACH FUNDRAISING EMAIL\n   This does not require manufacturing panic. Find a real constraint: a\n   funding deadline, a match opportunity, a number of unsponsored planters\n   waiting. State it specifically and with a date. \"We need $4,200 by\n   October 15 to confirm Andi's first year of support\" is urgency that is\n   honest and actionable.\n\n5. WEAVE THE ASK INTO THE PRAYER UPDATE\n   Stop running updates and asks as two separate email functions. The\n   update creates the emotional context. The ask should live inside it.\n   End every prayer update with a single, specific, friction-minimal\n   invitation to give \u2014 one link, one amount, one outcome. This is how\n   you train your list to move from informed to engaged.\n\n6. ESTABLISH A FACEBOOK PRESENCE AND BEGIN POSTING FIELD STORIES\n   Your audience is on Facebook. A page costs nothing to create. A phone\n   video from a church planter in Southeast Asia, posted once a week,\n   closes the geographic distance between your 55+ donors in American\n   churches and the people their giving supports. This also creates\n   shareable content: a donor who shares your post becomes a referral\n   channel. Begin here before any other platform.\n\n7. CREATE A SIMPLE WEBSITE WITH ONE CLEAR CONVERSION PATH\n   This does not need to be elaborate. A single-page site with: who you\n   are in one sentence, one story, one photo, one giving link. It needs\n   to be findable by search, linkable in email, and shareable. Without\n   it, you have no persistent digital identity and no way for a new donor\n   to verify you are real before they give.\n\n8. BUILD A BASIC TWO-STEP DONOR WELCOME SEQUENCE\n   When someone gives for the first time, they should receive at least two\n   emails in the first two weeks: (1) a thank-you that tells them exactly\n   what their first gift is doing, with a specific name or place, and (2)\n   an email five to seven days later that continues the story without\n   asking for anything \u2014 pure relationship investment. This sequence is\n   what turns a one-time giver into a recurring donor. The thank-you\n   subject line \"Thank you for your partnership\" suggests this is currently\n   a single generic email, which is a significant retention miss.\n\n9. IDENTIFY AND NAME YOUR RECURRING DONOR COMMUNITY\n   Your most valuable donors are people who give every month. They deserve\n   a name, a slightly different communication cadence, and the feeling that\n   they are inside something. Create a simple name for this group (\"The\n   Planting Partnership,\" \"The Southeast Asia Circle,\" or something\n   specific to your organization's language). Give them one exclusive\n   communication per quarter \u2014 a letter from a planter, an early look at\n   something in the field. This deepens retention and creates identity\n   around giving at that level.\n\n\u2501\u2501\u2501 STRATEGIC DIAGNOSIS \u2501\u2501\u2501\n\nThe root problem here is not a messaging problem \u2014 it is a category error.\nThis organization is operating as a church ministry communications office\nwhen it needs to be operating as a fundraising organization that uses\nministry communication as its primary lever. The prayer update is a ministry\ntool. The thank-you email is a courtesy. Neither is functioning as a\nfundraising instrument, and there is no apparent awareness that they should\nbe. The result is a loyal but aging donor base that is well-informed and\npoorly activated. They know what you are doing. They are not being clearly\ninvited to do more, give more, or bring others in.\n\nThe giving infrastructure confirms this category error. A PayPal button is\nwhat you add to a ministry website so that if someone really wants to give,\nthey can find a way to do it. It is not a fundraising tool. A fundraising\ntool is designed around the donor's experience: it anchors amounts, reduces\nfriction, handles recurrence, and confirms the gift in a way that builds\ntrust. The gap between \"we have a PayPal button\" and \"we have a giving\npage designed to convert a motivated donor\" is the gap between passive\nreceipt and active fundraising. This organization is in passive receipt\nmode after fifteen years of operation, which is why fixing the subject\nlines without fixing the giving page would be wasted effort. Fix the\ninfrastructure first, then drive traffic toward it with stronger messaging.\nThe sequence matters.\n"}], "grading": null}, {"id": "eval-1-without_skill", "prompt": "Run a brand audit on us. We're a small missions nonprofit, about 15 years old. We raise money for church planters in Southeast Asia. Our donors are mostly older (55+) church members. We don't have a website link but here are two recent email subject lines we used: 'July Prayer Update' and 'Thank you for your partnership.' Our giving page just has a PayPal button.", "eval_id": 1, "outputs": [{"name": "audit.txt", "type": "text", "content": "BRAND AUDIT REPORT\nOrganization: Small Missions Nonprofit (Southeast Asia Church Planting)\nDate: August 21, 2026\nAuditor: Claude Code\n-----------------------------------------------------------------------\n\nORGANIZATION OVERVIEW\n- Type: Missions nonprofit, ~15 years old\n- Mission: Raise funds for church planters in Southeast Asia\n- Primary donor base: Adults 55+, mostly church members\n- Digital presence reviewed: Email subject lines, giving page\n- Sample subject lines: \"July Prayer Update\" | \"Thank you for your partnership.\"\n- Giving mechanism: PayPal button on a giving page\n\n-----------------------------------------------------------------------\nSECTION 1: MESSAGING AUDIT\n-----------------------------------------------------------------------\n\n1A. CLARITY OF MISSION\nCurrent state: WEAK\n\nThe email subject lines provided reveal no clarity about what the organization\ndoes, who it serves, or why a donor should engage. \"July Prayer Update\" tells\nthe reader almost nothing about impact, urgency, or outcome. A first-time\nrecipient who stumbles across this email cannot determine:\n  - What region is being served\n  - What \"prayer update\" means in terms of real-world outcomes\n  - Why this month is significant\n\n\"Thank you for your partnership.\" is a transactional acknowledgment. It is\nappropriate as a receipt-style follow-up, but it misses the opportunity to\nreinforce what the donor's gift actually accomplished.\n\nVerdict: The organization is communicating to insiders. The language assumes\nthe reader already knows the story. This is a common nonprofit trap, sometimes\ncalled \"insider speak,\" and it is especially costly when trying to retain or\ngrow a donor base.\n\n1B. BRAND VOICE AND TONE\nCurrent state: GENERIC / INSTITUTIONAL\n\n\"Partnership\" is overused in Christian nonprofit language. While it carries\ntheological weight (Philippians 1:5), it has become so common in this sector\nthat it reads as boilerplate. The same is true for \"prayer update\" -- it is\nwhat every missions organization sends, which means nothing about it creates\ndistinction for this organization specifically.\n\nThe 55+ donor demographic responds well to:\n  - Personal, warm, pastoral language\n  - Named individuals and specific stories\n  - A sense of being \"part of something happening right now\"\n  - Trust signals (longevity, accountability, field presence)\n\nThe current voice does not leverage any of these. It is correct but not\ncompelling.\n\n1C. VALUE PROPOSITION\nCurrent state: ABSENT\n\nAt no point in either subject line does the organization communicate a\nconcrete value proposition. The donor is not told:\n  - How many church planters are supported\n  - Where specifically in Southeast Asia (country, region, people group)\n  - What $X does on the field\n  - How their giving compares to the need\n\nA strong missions nonprofit value proposition for this demographic sounds like:\n  \"Your monthly gift of $50 provides a church planter in rural Myanmar with\n   one full month of living support.\"\n\nNothing in the current sample messaging approaches this.\n\n1D. TRUST AND LONGEVITY SIGNALS\nCurrent state: UNDERUSED\n\nThis organization is 15 years old. That is a significant trust asset --\nparticularly for a 55+ donor base that is rightly skeptical of where their\ncharitable dollars go. Fifteen years of field presence, relationships, and\naccountability should be woven into nearly every communication. It is not\nvisible in the current samples at all.\n\n-----------------------------------------------------------------------\nSECTION 2: CTA (CALL-TO-ACTION) AUDIT\n-----------------------------------------------------------------------\n\n2A. EMAIL CTAs\nCurrent state: UNKNOWN BUT LIKELY WEAK\n\nNeither subject line contains an embedded CTA signal. A well-crafted subject\nline often implies its own CTA (\"Read David's story from the field\" implies\nopen-and-engage; \"Match ends Friday\" implies act now). The current subjects\ncreate no pull.\n\nCommon CTA failures in missions email:\n  - \"Click here to give\" with no context\n  - Generic \"Learn more\" links with no urgency or specificity\n  - No secondary CTA for non-givers (e.g., share, pray, refer)\n\nFor a 55+ donor base, CTAs should be:\n  - Simple and single (one ask per email, not three)\n  - Low friction (\"Reply to this email\" works as well as a link for this age group)\n  - Emotionally grounded before the ask (story first, ask second)\n\n2B. GIVING PAGE CTA\nCurrent state: CRITICALLY WEAK\n\nA PayPal button with no surrounding context is the digital equivalent of\npassing a plate with no sermon. It fails on multiple levels:\n\nTRUST: PayPal is not a recognized nonprofit giving platform for this audience.\n  Donors who have given to established charities expect platforms like\n  Kindful, Pushpay, Tithe.ly, Donorbox, or a known payment processor with\n  clear nonprofit branding. A bare PayPal button raises questions:\n  \"Is this legitimate?\" \"Will I get a tax receipt?\" \"Where does this money go?\"\n  For donors over 55 who are already cautious about online transactions, this\n  is a conversion killer.\n\nCONTEXT: There is no stated giving amount, no impact statement per dollar,\n  no urgency, no photo, no story, no testimony. The donor has no emotional\n  foundation when they land on the page.\n\nFRICTION: PayPal requires a PayPal account or a credit card entry in an\n  interface the donor did not choose. Many older donors are uncomfortable or\n  unable to complete this flow without assistance.\n\nTAX RECEIPT AMBIGUITY: Nothing on the page (as described) clarifies that\n  donations are tax-deductible or how receipts are issued.\n\n-----------------------------------------------------------------------\nSECTION 3: HOOKS AUDIT\n-----------------------------------------------------------------------\n\n3A. SUBJECT LINE HOOKS\nCurrent state: FAILING\n\nThe hook is the first thing a reader encounters -- it determines open rate.\nBoth subject lines provided lack hooks entirely.\n\n\"July Prayer Update\"\n  - Category: Informational / Administrative\n  - Hook strength: None. It tells the reader what format they will receive,\n    not why they should care.\n  - Open rate prediction: Well below industry average for nonprofits (which\n    is already a modest ~25-30%). This type of subject line typically\n    performs in the 12-18% range for warm donor lists.\n\n\"Thank you for your partnership.\"\n  - Category: Transactional acknowledgment\n  - Hook strength: Moderate for a post-give confirmation, but weak as a\n    standalone email. The period adds formality that can read as cold.\n  - A better version: \"Your gift just reached the field -- here's what happened.\"\n\nWhat hooks actually work for this organization's profile:\n\n  Story-first hooks:\n  - \"The church met in a rice field. 47 people showed up.\"\n  - \"Daniel hasn't missed a Sunday in 3 years. Here's why.\"\n\n  Urgency hooks (used sparingly and honestly):\n  - \"One planter family is waiting. Here's their story.\"\n  - \"Before August ends: a quick update from Southeast Asia.\"\n\n  Gratitude hooks (relational, not transactional):\n  - \"You made this possible -- read what happened last month.\"\n  - \"A message from the field, for you.\"\n\n  Curiosity hooks:\n  - \"Something unexpected happened in Vietnam last week.\"\n  - \"We thought you'd want to hear this directly from David.\"\n\n3B. EMAIL BODY HOOKS (INFERRED)\nCurrent state: LIKELY WEAK\n\nOrganizations that use weak subject lines almost always use weak opening\nsentences in the email body. The most common failure pattern:\n\n  \"Dear Friend, We hope this letter finds you well. This month we wanted\n   to update you on...\"\n\nThis opening wastes the reader's first three seconds. A strong hook opening:\n\n  \"Last Tuesday, a church met for the first time in a village that had\n   never heard the Gospel. Your name is in that story.\"\n\nThe second version connects the donor to a specific moment, not a newsletter.\n\n-----------------------------------------------------------------------\nSECTION 4: CHANNEL AND FORMAT GAPS\n-----------------------------------------------------------------------\n\n4A. EMAIL DESIGN (INFERRED)\nGiven the subject line patterns, it is likely that the email format is either\na plain-text letter or a lightly formatted HTML email with no visual hierarchy.\nFor the 55+ demographic, this is partially acceptable -- this group actually\nresponds well to personal-feeling text emails from known senders. However:\n  - No photos from the field is a missed opportunity\n  - No named field workers creates an abstraction problem\n  - No consistent template means no brand recognition builds over time\n\n4B. SOCIAL PROOF\nNo social proof signals are visible in the described touchpoints. Recommendations:\n  - Donor count (\"Over 400 families partner with us\")\n  - Longevity signal (\"Since 2011, we have supported 60+ church planters\")\n  - Third-party endorsement or denominational affiliation (if applicable)\n  - Field quotes from church planters themselves\n\n4C. GIVING INFRASTRUCTURE\nThe PayPal-only giving setup represents the single highest-priority fix in this\naudit. It is costing this organization real money in lost conversions. Modern\nalternatives for small nonprofits:\n  - Donorbox: Low fees, embeddable, recurring giving, tax receipts, donor portal\n  - Tithe.ly: Deeply trusted in the church context, well-known to 55+ church donors\n  - Kindful: CRM + giving combined, excellent for relationship tracking\n  - Pushpay: Trusted brand for church giving specifically\n\nAny of these would provide immediate trust improvement, recurring gift options,\nand proper receipt infrastructure.\n\n-----------------------------------------------------------------------\nSECTION 5: AUDIENCE-SPECIFIC GAPS\n-----------------------------------------------------------------------\n\nThe 55+ church member donor profile has well-documented characteristics:\n\nTHEY GIVE RELATIONALLY: They want to know the person receiving their gift.\nAnonymous \"church planters\" in \"Southeast Asia\" is too abstract. Named\nindividuals, photos, and personal updates build the relationship that drives\nlong-term retention.\n\nTHEY GIVE OUT OF THEOLOGICAL CONVICTION: This audience is motivated by the\nGreat Commission. Language that connects the work to Scripture, without being\npreachy, strengthens the case. The emails reviewed have no visible theological\nframing.\n\nTHEY DISTRUST COMPLEXITY: Simple, clear, one-ask emails outperform\nmulti-section newsletters with this group. The organization may be sending\ntoo much content per email if the subject lines are any guide.\n\nTHEY RESPOND TO PHONE AND MAIL: A significant portion of the 55+ donor base\nstill prefers giving by check or phone. If the organization has no mail program\nor phone option, it is leaving a substantial channel unaddressed.\n\nTHEY NEED TO FEEL REMEMBERED: \"Thank you for your partnership\" is a fine\nsentiment, but generic. A thank-you that references the donor's giving history\n(\"You've been with us for seven years\") or their specific impact (\"Your gift\nhelped support three planters this year\") creates the feeling of being known.\n\n-----------------------------------------------------------------------\nSECTION 6: PRIORITIZED RECOMMENDATIONS\n-----------------------------------------------------------------------\n\nPRIORITY 1 -- IMMEDIATE (within 30 days)\nReplace the PayPal giving button with a nonprofit-specific platform.\nRecommended: Donorbox or Tithe.ly. Both are inexpensive, trusted, and can\nbe live within a week. This single change will measurably improve conversion\nand donor trust.\n\nPRIORITY 2 -- SHORT-TERM (30-90 days)\nIntroduce named field workers into all communications. Pick two or three\nchurch planters who are willing to be featured. Give each a name, a photo,\na location, and a one-sentence story. Every email references at least one\nof them by name. This changes the giving relationship from abstract to personal.\n\nPRIORITY 3 -- SHORT-TERM (30-90 days)\nRebuild the email subject line formula. Proposed template:\n  \"[Name/Place] + [Specific thing that happened] + [This month/week/recently]\"\n  Example: \"David's church just hit 100 members -- here's how.\"\nTrain whoever writes the emails to lead with story, not format.\n\nPRIORITY 4 -- MEDIUM-TERM (90-180 days)\nAdd a longevity and impact statement to every major touchpoint:\n  \"Since 2011, we have partnered with [X] church planters across [countries],\n   seeing [Y] churches planted. You make that possible.\"\nThis leverages the 15-year history as a trust signal and gives donors a\nsense of cumulative impact.\n\nPRIORITY 5 -- MEDIUM-TERM (90-180 days)\nSegment the donor list by giving tenure and amount, and create at least two\ncommunication tracks: (a) first-year donors who need story and trust-building,\n(b) multi-year donors who need impact reinforcement and upgrade asks. These\naudiences need different messages.\n\nPRIORITY 6 -- LONGER-TERM (180+ days)\nConsider adding a direct mail component. For the 55+ demographic, a quarterly\nprint newsletter or annual impact report mailed to top donors can meaningfully\nincrease retention and gift size. The cost-per-dollar-raised for direct mail\nto warm lists remains strong for this demographic.\n\n-----------------------------------------------------------------------\nSECTION 7: SUMMARY SCORECARD\n-----------------------------------------------------------------------\n\nDIMENSION                  | CURRENT GRADE | NOTES\n---------------------------|---------------|----------------------------\nMission Clarity            | D             | Not communicated in emails\nBrand Voice                | C-            | Generic, insider language\nValue Proposition          | F             | Not present in any sample\nHooks / Subject Lines      | D             | Informational, no pull\nCTAs                       | D             | No visible CTA in subjects\nGiving Infrastructure      | D             | PayPal only, low trust\nDonor Personalization      | D             | No named individuals visible\nTrust Signals              | C             | 15-year history not leveraged\nAudience Alignment (55+)   | C-            | Missing relational + mail elements\nOverall Brand Health       | D+            | Functional but not compelling\n\n-----------------------------------------------------------------------\nBOTTOM LINE\n-----------------------------------------------------------------------\n\nThis organization appears to be surviving on relationship and inertia --\nthe existing donor base gives because they are committed, not because the\ncommunications are earning that commitment. That is a fragile position. As\nthe current donor cohort ages, retention will decline and acquisition will\nbe nearly impossible without stronger messaging.\n\nThe good news: 15 years of field presence, a clear geographic focus, and a\nmotivated donor base are genuine assets. The work on the ground is likely\ncompelling. The communications just need to start reflecting that. The fixes\nrequired are not expensive or technically complex -- they require editorial\ndiscipline, a platform upgrade, and a commitment to telling real stories\nabout real people. Every organization in this space that has made these changes\nhas seen measurable improvement in donor retention and average gift size.\n\nThe highest single-sentence summary: Stop sending newsletters about your\norganization and start sending dispatches from the field.\n\n-----------------------------------------------------------------------\nEND OF AUDIT\n-----------------------------------------------------------------------\n"}], "grading": null}, {"id": "eval-2-with_skill", "prompt": "/brand-audit \u2014 we're trying to reach younger donors (25-40) but nothing is working. We post on Instagram 3x a week, we send a monthly newsletter, and we have a giving page. Can you tell us what we're doing wrong?", "eval_id": 2, "outputs": [{"name": "audit.txt", "type": "text", "content": "\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nBRAND AUDIT: [Organization Name Not Provided]\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nOVERALL SCORE: Not calculable \u2014 6 of 8 dimensions lack sufficient input\nPARTIAL SCORE (scored dimensions only): 4/10 across 2 dimensions\n\nAUDIT STATUS: PARTIAL\nInputs received: A description of channel activity and target audience only.\nNo organization name, website URL, email copy, social handles, or content\nsamples were provided.\n\nDimensions scored: Channel Coverage, Strategic Blind Spots\nDimensions requiring additional input: Hook Strength, Messaging Clarity,\nCTA Effectiveness, Psychological Levers, Audience Precision, Voice Consistency\n\n\u2501\u2501\u2501 EXECUTIVE SUMMARY \u2501\u2501\u2501\nFrom the structural facts alone \u2014 Instagram 3x per week, monthly newsletter,\na giving page, target audience of 25-40 \u2014 a recognizable pattern emerges:\nthe org has channels but not a system, and is measuring activity (posts per\nweek) instead of movement (Instagram followers converting to email\nsubscribers who then give). The single highest-leverage fix before touching\nany copy is installing a conversion mechanism between social and email,\nbecause without it, every Instagram post is renting attention instead of\nbuilding an owned relationship.\n\n\u2501\u2501\u2501 SCORECARD \u2501\u2501\u2501\nDimension                  | Score | Verdict\n---------------------------|-------|------------------------------------------\n1. Hook Strength           |  N/A  | Insufficient data \u2014 no copy provided\n2. Messaging Clarity       |  N/A  | Insufficient data \u2014 no copy provided\n3. CTA Effectiveness       |  N/A  | Insufficient data \u2014 no copy provided\n4. Psychological Levers    |  N/A  | Insufficient data \u2014 no copy provided\n5. Audience Precision      |  N/A  | Insufficient data \u2014 no copy provided\n6. Voice Consistency       |  N/A  | Insufficient data \u2014 no copy provided\n7. Channel Coverage        |   2   | Channels exist; critical gaps for 25-40;\n                           |       | no cross-channel funnel visible\n8. Strategic Blind Spots   |   2   | Multiple structural problems visible from\n                           |       | description alone \u2014 pattern is clear\n\n\u2501\u2501\u2501 DETAILED FINDINGS \u2501\u2501\u2501\n\nDIMENSION 7: CHANNEL COVERAGE \u2014 Score: 2/5\n\n- Instagram at 3x per week is present, but no mention is made of Reels,\n  Stories, interactive polls, or link-in-bio capture strategy. For the\n  25-34 cohort, which is Instagram's largest demographic at roughly 30% of\n  its user base, Reels are the primary discovery surface \u2014 static or\n  carousel posts have declining organic reach. Posting without a Reels\n  strategy in 2026 is posting into a diminishing return.\n\n- The monthly newsletter cadence is a structural liability for building\n  relationships with newer donors. Industry data from the Fundraising\n  Effectiveness Project shows first-time donor retention sitting below 20%.\n  A monthly touchpoint is not frequent enough to build the trust required\n  to move a 25-40 year old from curious to committed \u2014 this age group\n  expects faster, lighter contact rhythms across multiple surfaces, not a\n  single monthly dump.\n\n- There is no mention of short-form video beyond Instagram. TikTok and\n  YouTube Shorts are where a meaningful portion of the 25-40 audience\n  discovers causes they care about. Absence here is not neutral \u2014 it means\n  another organization is filling that space.\n\n- There is no mention of how Instagram followers become email subscribers.\n  This is the most important gap in the entire channel stack. Social\n  platforms are rented land \u2014 algorithms change, accounts get suspended,\n  reach fluctuates. Email is owned. Without a clear, friction-minimal path\n  from Instagram follow to email list (a lead magnet, a \"join our\n  community\" link-in-bio, a story CTA), the org is generating awareness it\n  cannot retain.\n\n- There is no mention of a website beyond a giving page. Organic search is\n  a significant discovery channel for cause-aligned donors who are\n  researching before they give. If the org has no blog, no resource pages,\n  and no SEO-indexed content, it is invisible to the portion of the 25-40\n  audience that does due diligence before donating.\n\n- Channels confirmed present: Instagram, email (monthly), giving page.\n  Channels with no evidence of presence: TikTok, YouTube/Reels short-form,\n  Facebook (still relevant for 35-44), podcast or audio, events (virtual\n  or in-person), direct mail, SMS/text.\n\nWhat would change this score: Share your Instagram handle so posting\npatterns, content types, and engagement rates can be assessed. Share the\nnewsletter subject lines and body from the last two sends. Share the giving\npage URL. Any of these would allow the score to become evidence-based.\n\n\nDIMENSION 8: STRATEGIC BLIND SPOTS \u2014 Score: 2/5\n\nThree structural blind spots are visible from the description alone.\n\nBLIND SPOT 1 \u2014 Volume is substituting for strategy.\n\"We post 3x a week\" is a production metric, not a strategy. The relevant\nquestion is not how often you post but what each post is designed to make a\nstranger do next. Without a content architecture \u2014 a deliberate mix of\nstory posts (to earn emotional connection), proof posts (to build\ncredibility), and conversion posts (to drive a specific action) \u2014 three\nposts a week generates motion without direction. Most orgs at this stage\nare posting variations of the same content type repeatedly: announcements,\nimpact stats, or thank-yous. If that is happening here, posting less with\nmore intentionality would outperform posting more with the current mix.\n\nBLIND SPOT 2 \u2014 The audience is named but the content is probably not\nwritten for them.\nSaying \"we want to reach 25-40 donors\" is an intention, not a targeting\nstrategy. The 25-40 range contains two meaningfully different cohorts:\nolder Millennials (roughly 37-40) who are career-established, potentially\nparenting, and giving from a sense of values alignment; and younger\nMillennials and older Gen Z (25-36) who are financially forming, motivated\nby identity and belonging, and skeptical of institutional language. Copy\nwritten to satisfy both usually satisfies neither. Without seeing the\nactual content, it cannot be confirmed \u2014 but orgs that describe their\ntargeting this way almost universally write copy aimed at a generic adult\nrather than a specific person. The test: read your last Instagram caption\nand ask whether a 29-year-old would feel directly addressed. If the answer\nis \"probably not,\" the audience problem is in the copy, not the channel.\n\nBLIND SPOT 3 \u2014 The funnel has an entry but no middle.\nInstagram -> giving page is a direct ask to a cold audience. For most\n25-40 donors, that is too fast. This age group is research-oriented and\ntrust-driven before committing dollars; Bloomerang's 2026 Giving Report\nconfirms that authenticity and demonstrated impact are decisive factors for\nyounger donors. A funnel without a trust-building middle \u2014 email sequences,\nbehind-the-scenes content, community touchpoints, non-ask emails that\ndeliver value \u2014 is asking for a second date before the first one has ended.\nThe monthly newsletter may be intended to fill this role, but at one email\nper month with no stated nurture sequence for new subscribers, it is not\ndoing that work.\n\n\u2501\u2501\u2501 PSYCHOLOGICAL LEVERS IN USE \u2501\u2501\u2501\n\nBased on structural description alone \u2014 no copy assessed.\n\nUrgency   ? | Scarcity   ? | Social Proof ? | Authority  ?\nReciprocity ? | Identity  ? | Belonging   ? | Story      ?\n\nAll lever scores require actual copy to assess. However, based on the\npattern typical of orgs with this channel profile and the described\nchallenges, the most commonly absent levers for organizations targeting\nyounger donors are:\n\n- Identity: \"You are the kind of person who...\" framing. The 25-40 cohort\n  gives significantly in response to self-concept alignment \u2014 they want to\n  give because it reflects who they are, not just because a need exists.\n  Most nonprofit copy does not use this lever at all.\n\n- Belonging: Inviting donors into a named community or movement. Younger\n  donors want to join something, not just fund something. Language that\n  creates insider identity (\"our community of changemakers,\" member\n  framing, naming the group of people who give) is consistently\n  underused.\n\n- Reciprocity: Providing genuine value before asking. A free resource, a\n  compelling story, an exclusive insight \u2014 something that makes the donor\n  feel they received something before being asked to give. Monthly\n  newsletters that are primarily organizational updates do not satisfy\n  this lever.\n\nThese three should be the first levers tested once copy is available for\nreview.\n\n\u2501\u2501\u2501 PRIORITY FIX LIST \u2501\u2501\u2501\n\nRanked by estimated impact given what is known. Items marked * require\ncontent review to confirm priority placement.\n\n1. INSTALL A SOCIAL-TO-EMAIL CONVERSION PATH\n   Instagram followers who never become email subscribers are not donors\n   in development \u2014 they are borrowed attention. Add a specific,\n   low-friction email capture to your Instagram link-in-bio tied to\n   something worth signing up for (a story series, a resource, a\n   \"behind the mission\" email). This is the single structural fix that\n   makes every other channel investment compound instead of leak. Cost:\n   low. Impact: unlocks everything downstream.\n\n2. MOVE FROM MONTHLY TO BIWEEKLY EMAIL WITH A NURTURE SEQUENCE\n   Monthly email is not frequent enough to build the relationship trust\n   that precedes a first gift from a 25-40 donor. A biweekly cadence \u2014\n   alternating between value/story and action \u2014 gives the relationship\n   room to develop. More importantly, new subscribers should receive a\n   3-5 email welcome/nurture sequence before receiving any general\n   newsletter. Right now, a new subscriber waits up to 30 days for first\n   contact. That is a cold list problem compounding monthly.\n\n3. ADD REELS TO THE INSTAGRAM MIX *\n   If current 3x-per-week posting is primarily static images or carousels,\n   organic reach is structurally capped. Reels get preferential\n   distribution to non-followers, which is the only way to grow. At least\n   one of three weekly posts should be a Reel. Content does not need to be\n   produced \u2014 a 30-second story told by someone your work has affected,\n   shot on a phone, will outperform a designed graphic for reach and\n   engagement with the 25-40 cohort.\n\n4. REDESIGN THE CONTENT MIX AROUND AN ARCHITECTURE, NOT A CALENDAR *\n   Three posts a week should have a deliberate content type rotation: one\n   story post (specific individual, before/after, named moment), one proof\n   post (a number with context, a partner validation, a donor quote), one\n   action post (a specific CTA with a reason to act now). If all three\n   posts are currently the same content type \u2014 typically announcements or\n   abstract impact claims \u2014 the mix needs restructuring before frequency\n   matters.\n\n5. AUDIT THE GIVING PAGE FOR FRICTION AND SPECIFICITY *\n   Giving pages lose younger donors at three points: too many form fields,\n   no specific impact anchoring (\"$50 does X\"), and no urgency mechanism.\n   Sharing the URL would allow a full assessment, but the highest-frequency\n   failure is a page that makes the donor feel like they are filling out a\n   form rather than making a decision that matters. The fix is usually:\n   reduce fields, add impact anchors next to dollar amounts, and add a\n   specific reason to give today (a match deadline, a goal thermometer, a\n   named moment).\n\n6. TEST IDENTITY-BASED COPY IN THE NEXT EMAIL AND THREE INSTAGRAM POSTS *\n   Before restructuring everything, run a single test: rewrite your next\n   email subject line and first sentence, and your next three Instagram\n   captions, using \"you are the kind of person who...\" framing. Do not\n   open with what your org does. Open with who the reader is. This is a\n   one-week test that will tell you more than a month of analytics on the\n   current content.\n\n7. BUILD AN EXPLICIT TRUST MIDDLE FOR THE FUNNEL\n   The gap between Instagram follow and giving page is too wide for a\n   25-40 audience making their first decision about an org. Add a middle\n   layer: an email sequence of 3-5 messages sent to new subscribers that\n   delivers value, tells a story, establishes credibility, and only then\n   makes an ask. This mirrors how younger donors actually make decisions \u2014\n   research, trust-building, then action \u2014 rather than assuming the social\n   follow is already sufficient trust to ask for money.\n\n8. PROVIDE CONTENT FOR A FULL AUDIT\n   The six unscored dimensions \u2014 Hook Strength, Messaging Clarity, CTA\n   Effectiveness, Psychological Levers, Audience Precision, and Voice\n   Consistency \u2014 are where the specific copy problems live. Items 1-7\n   above are structural fixes that will help regardless of copy quality.\n   But the reasons nothing is working are most likely visible in the\n   actual words being used. Share the website URL, the last two email\n   subject lines and bodies, and the Instagram handle to get a complete\n   diagnosis.\n\n\u2501\u2501\u2501 STRATEGIC DIAGNOSIS \u2501\u2501\u2501\n\nThe pattern described \u2014 consistent activity, no results \u2014 is almost never\na channel problem. Instagram is the right platform for 25-40 donors.\nEmail is the right relationship tool. A giving page is the right conversion\nsurface. The channels are not wrong. What is wrong is that these three\nthings are not connected into a system, and within each channel, the org\nis almost certainly optimizing for production (posts go out, newsletters\ngo out, the page exists) rather than for conversion (a stranger becomes a\nsubscriber, a subscriber becomes a first-time donor, a first-time donor\nbecomes a recurring one).\n\nThe 25-40 cohort is specifically unforgiving of the production-over-\nconversion mistake because they have grown up with algorithmic content and\nare highly attuned to the difference between organizations that are\ncommunicating at them and organizations that are communicating with them.\nThey will not give to an org that feels like a broadcast. They will give\nto an org that feels like a community they want to belong to, led by people\nwho are transparent about both wins and struggles, and specific enough about\nimpact that they can picture what their $50 does.\n\nThe root issue connecting the visible weak signals is this: the org has\nbuilt a presence strategy when what is needed is a relationship strategy.\nPresence says \"we show up regularly.\" Relationship says \"we know who you\nare, we give you something before we ask, and we make it easy for you to\ntake one specific next step.\" Until that shift happens at the structural\nlevel, increasing posting frequency or redesigning the giving page will\nnot move the number.\n\n\u2501\u2501\u2501 TO COMPLETE THIS AUDIT \u2501\u2501\u2501\n\nShare any of the following to unlock the six unscored dimensions:\n\n- Website URL (homepage and giving page)\n- Instagram handle or 3-5 recent post captions\n- Last 2 email subject lines and body text (or newsletter screenshot)\n- Your own description of who specifically you are picturing when you\n  write \u2014 age, relationship to your cause, what they do on a Saturday,\n  what they are afraid of, what makes them proud\n\nThe more specific the inputs, the more specific the diagnosis.\n"}], "grading": null}, {"id": "eval-2-without_skill", "prompt": "/brand-audit \u2014 we're trying to reach younger donors (25-40) but nothing is working. We post on Instagram 3x a week, we send a monthly newsletter, and we have a giving page. Can you tell us what we're doing wrong?", "eval_id": 2, "outputs": [{"name": "audit.txt", "type": "text", "content": "BRAND & MARKETING AUDIT: YOUNGER DONOR ENGAGEMENT (AGES 25-40)\n==============================================================\nPrepared: August 21, 2026\nAudience: Internal team / leadership\nContext: Organization posts on Instagram 3x/week, sends a monthly newsletter,\n         and maintains a giving page. Younger donor acquisition is underperforming.\n\n\nEXECUTIVE SUMMARY\n-----------------\nThe tactics you are using -- Instagram presence, email newsletter, and a giving\npage -- are not wrong in principle. They are, however, likely being executed in\nways that are misaligned with how donors aged 25-40 actually discover causes,\nform trust, and make the decision to give. The gap is almost never the channel.\nIt is almost always the message, the experience, and the ask.\n\nBelow is a structured audit covering what is most likely broken and what to do\nabout it.\n\n\nSECTION 1: INSTAGRAM -- WHAT IS PROBABLY WRONG\n-----------------------------------------------\n\nProblem 1a: You are posting content, not starting conversations.\n  Three posts per week on a schedule is a publishing cadence, not a community\n  strategy. Younger donors do not respond to broadcast-style social media. They\n  engage with accounts that reply to comments, participate in trending\n  conversations relevant to the cause, ask questions in captions, use polls and\n  question stickers in Stories, and demonstrate a human voice behind the brand.\n  If your posts are announcements, statistics, or event flyers, they will be\n  scrolled past.\n\nProblem 1b: You are optimizing for followers instead of trust.\n  Reach and follower count are vanity metrics. What converts a 28-year-old\n  Instagram user into a donor is repeated, low-stakes exposure to your work\n  that builds credibility over time. This usually means: behind-the-scenes\n  content (showing real staff, real beneficiaries with consent, real processes),\n  not polished campaign graphics.\n\nProblem 1c: Your feed is probably not telling a story.\n  Younger donors are story-literate. They have grown up on narrative content.\n  If your grid is a mix of quote cards, event promos, and statistics, there is\n  no narrative thread pulling someone from \"I just discovered this account\" to\n  \"I understand exactly what this organization does and why it matters.\"\n\nProblem 1d: You may be ignoring Reels entirely, or using them wrong.\n  As of 2025-2026, short-form video (Reels) receives 3-5x the organic reach of\n  static posts on Instagram for most accounts. If your 3x/week cadence is\n  primarily static posts, you are working against the algorithm. Reels do not\n  need to be high-production -- in fact, authenticity often outperforms polish\n  for cause-driven content. A 30-second video of a program staff member\n  explaining one person's story will outperform a designed graphic almost every\n  time.\n\nProblem 1e: There is no clear call to action hierarchy.\n  If every post ends with \"Donate now\" or \"Link in bio,\" you are training your\n  audience to ignore you. Younger audiences require progressive commitment:\n  follow -> save -> share -> sign up -> give small -> give more. Skipping steps\n  creates friction. Most posts should not ask for money. They should ask for\n  low-commitment engagement (save this, share this, tell us in the comments).\n\nFIXES FOR INSTAGRAM:\n  - Shift at least 50% of content to Reels. Use authentic, lo-fi video.\n  - Dedicate one day per week to engagement-only activity: reply to comments,\n    respond to DMs, engage with followers' own content.\n  - Build a content arc: introduce a person/place/problem, follow up over weeks.\n    Donors should feel like they are watching an unfolding story, not reading a\n    bulletin board.\n  - Use Stories 4-5x/week with interactive stickers (polls, questions, sliders).\n  - Retire the \"link in bio to donate\" CTA for most posts. Replace it with\n    invitations to engage (\"What do you think?\", \"Share if you've ever...\").\n  - Reserve donation asks for high-emotion moments with clear impact framing\n    (\"$40 does X specific thing -- link in bio\").\n\n\nSECTION 2: THE MONTHLY NEWSLETTER -- WHAT IS PROBABLY WRONG\n-------------------------------------------------------------\n\nProblem 2a: Monthly is too infrequent for relationship-building.\n  A monthly email means someone who subscribed after seeing a compelling post\n  might wait 3-4 weeks for your first follow-up message. That is enough time to\n  forget you exist. For new subscribers especially, the first 7-14 days are\n  critical. If you are not sending a welcome sequence, you are losing warm leads.\n\nProblem 2b: It is probably an \"update\" newsletter, not a value newsletter.\n  Most nonprofit newsletters read like a report to funders: program stats, staff\n  news, upcoming events, board updates. Donors aged 25-40 do not open email for\n  organizational updates. They open email that teaches them something, makes\n  them feel something, or gives them something. Ask yourself: would a person who\n  has never heard of your organization find this newsletter worth reading? If\n  not, it is an internal document dressed up as marketing.\n\nProblem 2c: The subject lines are probably generic.\n  \"November Newsletter,\" \"Our Latest Update,\" \"See What We've Been Up To\" --\n  these subject lines generate open rates under 15%. Younger audiences have\n  high-competition inboxes. Subject lines need to be specific, curiosity-driven,\n  or emotionally resonant. \"The student who almost didn't make it\" will\n  outperform \"Our Fall Newsletter\" every single time.\n\nProblem 2d: There is likely no segmentation.\n  A 26-year-old who found you through Instagram and has never donated should\n  receive different email content than a 38-year-old who gave $50 last year.\n  Sending everyone the same newsletter treats your audience as a monolith. At\n  minimum, segment between: new subscribers (welcome/education sequence),\n  lapsed donors (re-engagement sequence), and active donors (stewardship\n  content).\n\nProblem 2e: Mobile rendering may be broken or mediocre.\n  The majority of people aged 25-40 read email on their phones. If your\n  newsletter requires horizontal scrolling, has tiny text, loads slowly due to\n  heavy images, or has buttons that are hard to tap, you are losing readers\n  before they reach the ask.\n\nFIXES FOR THE NEWSLETTER:\n  - Build a 3-part automated welcome sequence: (1) who we are and why it\n    matters, (2) one powerful story, (3) easy first action (follow on social,\n    sign a petition, share with a friend -- not donate yet).\n  - Move to biweekly or at minimum send 2 emails/month: one story/value email,\n    one shorter action/update email.\n  - Audit your last 6 subject lines. Would you open them? Rewrite them to be\n    specific and human.\n  - Strip out organizational jargon. Read every sentence and ask: would a\n    23-year-old who cares about this issue but does not know our org understand\n    this sentence? If not, rewrite it.\n  - Test mobile rendering before every send. Use a tool like Litmus or just send\n    a test to your own phone.\n  - Introduce a minimal segmentation strategy: new vs. existing vs. lapsed.\n\n\nSECTION 3: THE GIVING PAGE -- WHAT IS PROBABLY WRONG\n------------------------------------------------------\n\nProblem 3a: It probably does not load fast enough or is not mobile-optimized.\n  Studies consistently show that giving page drop-off spikes when load time\n  exceeds 3 seconds. If your giving page is an embedded third-party widget on a\n  slow website, or if the form is not designed for mobile input, you are losing\n  donors at the moment of highest intent. This is one of the most common and\n  most fixable problems.\n\nProblem 3b: The page likely leads with the organization, not the donor.\n  Most giving pages say \"Support [Organization Name]\" or \"Help us achieve our\n  mission.\" Younger donors respond to framing that centers their own agency:\n  \"You can change what happens next.\" \"Your $35 does exactly this.\" The\n  psychological shift from \"give to us\" to \"here is what you make possible\" is\n  significant.\n\nProblem 3c: There is probably no social proof for a first-time donor.\n  A 29-year-old landing on your giving page for the first time has no reason to\n  trust that their money will be used well. Giving pages for younger audiences\n  need: a brief (1-2 sentence) impact statement, a specific example of what a\n  common gift amount achieves, a trust signal (charity rating, a quote from\n  someone served, a number of donors/years in operation), and ideally a short\n  video or photo that humanizes the work. Walls of text describing your mission\n  statement do not convert.\n\nProblem 3d: The giving amounts may be misaligned.\n  If your default giving amounts are $50, $100, $250, $500, they may feel\n  inaccessible to a 27-year-old with student loans. Consider adding a $25 or\n  even $15 option with specific impact language attached. The goal is a first\n  gift, not the largest gift. A small donor who has a positive first experience\n  is highly likely to upgrade over time.\n\nProblem 3e: There is probably no monthly giving emphasis.\n  Younger donors are more comfortable with subscription models than large\n  one-time gifts. If your giving page defaults to one-time giving, or if monthly\n  giving is buried, you are missing the most natural giving mode for this age\n  group. Emphasize recurring giving with language like \"Join 400 monthly donors\"\n  or \"Give $10/month -- that's less than one streaming subscription.\"\n\nProblem 3f: The post-donation experience is probably transactional.\n  What happens after someone gives? If the answer is \"they receive an\n  auto-generated receipt email,\" you have failed the most critical moment in\n  donor retention. The first 24 hours after a gift are when donor identity is\n  forming. A personal-feeling thank you (video, specific message, social share\n  prompt) dramatically increases the likelihood of a second gift and word-of-\n  mouth referral.\n\nFIXES FOR THE GIVING PAGE:\n  - Run a page speed test (Google PageSpeed Insights). Fix anything under 80/100\n    for mobile.\n  - Rewrite the hero copy to center the donor's impact, not your organization.\n  - Add a $15 or $25 giving option with a one-sentence specific impact statement\n    attached to each amount.\n  - Make monthly giving the default selection, or at minimum visually prominent.\n  - Add one trust signal above the form fold: star rating, donor count, a\n    beneficiary quote.\n  - Overhaul the post-donation experience: send a personal thank-you video from\n    a staff member or beneficiary (can be a simple phone recording) within\n    24 hours of a first gift. This alone has measurable impact on retention.\n\n\nSECTION 4: THE BIGGER STRATEGIC PROBLEMS\n-----------------------------------------\n\n4a: You may have no community, only an audience.\n  Younger donors are not passive recipients of your content. They want to feel\n  like participants. Organizations that successfully retain donors aged 25-40\n  almost always have some form of community: a group chat, a Discord, a\n  volunteer cohort, an ambassador program, a peer fundraising structure. If the\n  only relationship between your organization and a young donor is: they see\n  your posts, they get your email, and they receive your receipt -- that\n  relationship is extremely fragile.\n\n4b: You are probably not leveraging peer trust.\n  The most powerful driver of giving for the 25-40 demographic is not an\n  organization's marketing -- it is a recommendation from a peer. If you do not\n  have a structured peer fundraising program (birthday fundraisers, challenge\n  campaigns, ambassador programs), you are leaving your most powerful channel\n  completely untapped. Every donor you acquire is a potential fundraiser; very\n  few organizations treat them that way.\n\n4c: You may be invisible to people who do not already follow you.\n  Instagram 3x/week + a newsletter only reaches people who already know you\n  exist. If you have no paid social budget, no earned media strategy, no\n  partnerships with adjacent accounts or organizations, no presence on platforms\n  where younger people discover new causes (TikTok, YouTube Shorts, Reddit,\n  LinkedIn for the 30-40 subset) -- you are marketing to an existing audience,\n  not acquiring a new one. Growth requires top-of-funnel activity.\n\n4d: You have no clear theory of the donor journey.\n  The existence of Instagram + newsletter + giving page does not constitute a\n  donor acquisition strategy. A strategy requires: (1) how someone first\n  discovers you, (2) what convinces them you are credible, (3) what prompts\n  their first small action, (4) what escalates that relationship to a first gift,\n  (5) what ensures a second gift. If these five steps are not deliberately\n  designed and connected, each piece of your marketing is working in isolation.\n\n\nSECTION 5: PRIORITY ACTION LIST\n---------------------------------\n\nIMMEDIATE (Do these in the next 30 days):\n  1. Audit your last 12 Instagram posts. Count how many are Reels. If under 4,\n     shift your content calendar immediately.\n  2. Set up a 3-email welcome sequence for new newsletter subscribers.\n  3. Run a mobile speed test on your giving page. Fix critical issues.\n  4. Rewrite your giving page hero copy to lead with donor impact.\n  5. Add specific impact language to each giving amount on the donation form.\n\nSHORT-TERM (30-90 days):\n  6. Launch a monthly giving option as the default or prominent choice.\n  7. Design a post-donation thank-you experience (personal video or message).\n  8. Move newsletter to biweekly. Split into story email + action email.\n  9. Begin one authentic Reel series (staff voices, field footage, impact\n     stories -- pick one and commit to 8 weeks).\n  10. Identify 5-10 peer accounts or organizations to co-create or cross-promote\n      content with (earned reach, not paid).\n\nMEDIUM-TERM (90-180 days):\n  11. Launch a peer fundraising or ambassador program for your most engaged\n      existing young donors.\n  12. Test a small paid social campaign ($300-500) targeting cold audiences\n      aged 25-40 with your highest-performing organic content.\n  13. Establish a content narrative arc: introduce one multi-episode story\n      across platforms over 6-8 weeks and measure engagement vs. baseline.\n\n\nCLOSING NOTE\n------------\nNothing on this list requires a large budget or a full-time marketing staff.\nMost of it requires a willingness to be more human, more specific, and more\npatient. Younger donors respond to organizations that feel honest, that show\ntheir work, that treat them as intelligent adults, and that make the act of\ngiving feel meaningful rather than transactional. The channel is not your\nproblem. The relationship is.\n\n==============================================================\nEnd of Audit\n==============================================================\n"}], "grading": null}], "previous_feedback": {}, "previous_outputs": {}};
+
+    // ---- State ----
+    let feedbackMap = {};  // run_id -> feedback text
+    let currentIndex = 0;
+    let visitedRuns = new Set();
+
+    // ---- Init ----
+    async function init() {
+      // Load saved feedback from server — but only if this isn't a fresh
+      // iteration (indicated by previous_feedback being present). When
+      // previous feedback exists, the feedback.json on disk is stale from
+      // the prior iteration and should not pre-fill the textareas.
+      const hasPrevious = Object.keys(EMBEDDED_DATA.previous_feedback || {}).length > 0
+        || Object.keys(EMBEDDED_DATA.previous_outputs || {}).length > 0;
+      if (!hasPrevious) {
+        try {
+          const resp = await fetch("/api/feedback");
+          const data = await resp.json();
+          if (data.reviews) {
+            for (const r of data.reviews) feedbackMap[r.run_id] = r.feedback;
+          }
+        } catch { /* first run, no feedback yet */ }
+      }
+
+      document.getElementById("skill-name").textContent = EMBEDDED_DATA.skill_name;
+      showRun(0);
+
+      // Wire up feedback auto-save
+      const textarea = document.getElementById("feedback");
+      let saveTimeout = null;
+      textarea.addEventListener("input", () => {
+        clearTimeout(saveTimeout);
+        document.getElementById("feedback-status").textContent = "";
+        saveTimeout = setTimeout(() => saveCurrentFeedback(), 800);
+      });
+    }
+
+    // ---- Navigation ----
+    function navigate(delta) {
+      const newIndex = currentIndex + delta;
+      if (newIndex >= 0 && newIndex < EMBEDDED_DATA.runs.length) {
+        saveCurrentFeedback();
+        showRun(newIndex);
+      }
+    }
+
+    function updateNavButtons() {
+      document.getElementById("prev-btn").disabled = currentIndex === 0;
+      document.getElementById("next-btn").disabled =
+        currentIndex === EMBEDDED_DATA.runs.length - 1;
+    }
+
+    // ---- Show a run ----
+    function showRun(index) {
+      currentIndex = index;
+      const run = EMBEDDED_DATA.runs[index];
+
+      // Progress
+      document.getElementById("progress").textContent =
+        `${index + 1} of ${EMBEDDED_DATA.runs.length}`;
+
+      // Prompt
+      document.getElementById("prompt-text").textContent = run.prompt;
+
+      // Config badge
+      const badge = document.getElementById("config-badge");
+      const configMatch = run.id.match(/(with_skill|without_skill|new_skill|old_skill)/);
+      if (configMatch) {
+        const config = configMatch[1];
+        const isBaseline = config === "without_skill" || config === "old_skill";
+        badge.textContent = config.replace(/_/g, " ");
+        badge.className = "config-badge " + (isBaseline ? "config-baseline" : "config-primary");
+        badge.style.display = "inline-block";
+      } else {
+        badge.style.display = "none";
+      }
+
+      // Outputs
+      renderOutputs(run);
+
+      // Previous outputs
+      renderPrevOutputs(run);
+
+      // Grades
+      renderGrades(run);
+
+      // Previous feedback
+      const prevFb = (EMBEDDED_DATA.previous_feedback || {})[run.id];
+      const prevEl = document.getElementById("prev-feedback");
+      if (prevFb) {
+        document.getElementById("prev-feedback-text").textContent = prevFb;
+        prevEl.style.display = "block";
+      } else {
+        prevEl.style.display = "none";
+      }
+
+      // Feedback
+      document.getElementById("feedback").value = feedbackMap[run.id] || "";
+      document.getElementById("feedback-status").textContent = "";
+
+      updateNavButtons();
+
+      // Track visited runs and promote done button when all visited
+      visitedRuns.add(index);
+      const doneBtn = document.getElementById("done-btn");
+      if (visitedRuns.size >= EMBEDDED_DATA.runs.length) {
+        doneBtn.classList.add("ready");
+      }
+
+      // Scroll main content to top
+      document.querySelector(".main").scrollTop = 0;
+    }
+
+    // ---- Render outputs ----
+    function renderOutputs(run) {
+      const container = document.getElementById("outputs-body");
+      container.innerHTML = "";
+
+      const outputs = run.outputs || [];
+      if (outputs.length === 0) {
+        container.innerHTML = '<div class="empty-state">No output files</div>';
+        return;
+      }
+
+      for (const file of outputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        // Always show file header with download link
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const content = document.createElement("div");
+        content.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          content.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          content.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          content.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(content, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          content.appendChild(a);
+        } else if (file.type === "error") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          pre.style.color = "var(--red)";
+          content.appendChild(pre);
+        }
+
+        fileDiv.appendChild(content);
+        container.appendChild(fileDiv);
+      }
+    }
+
+    // ---- XLSX rendering via SheetJS ----
+    function renderXlsx(container, b64Data) {
+      try {
+        const raw = Uint8Array.from(atob(b64Data), c => c.charCodeAt(0));
+        const wb = XLSX.read(raw, { type: "array" });
+
+        for (let i = 0; i < wb.SheetNames.length; i++) {
+          const sheetName = wb.SheetNames[i];
+          const ws = wb.Sheets[sheetName];
+
+          if (wb.SheetNames.length > 1) {
+            const sheetLabel = document.createElement("div");
+            sheetLabel.style.cssText =
+              "font-weight:600; font-size:0.8rem; color:#b0aea5; margin-top:0.5rem; margin-bottom:0.25rem;";
+            sheetLabel.textContent = "Sheet: " + sheetName;
+            container.appendChild(sheetLabel);
+          }
+
+          const htmlStr = XLSX.utils.sheet_to_html(ws, { editable: false });
+          const wrapper = document.createElement("div");
+          wrapper.innerHTML = htmlStr;
+          container.appendChild(wrapper);
+        }
+      } catch (err) {
+        container.textContent = "Error rendering spreadsheet: " + err.message;
+      }
+    }
+
+    // ---- Grades ----
+    function renderGrades(run) {
+      const section = document.getElementById("grades-section");
+      const content = document.getElementById("grades-content");
+
+      if (!run.grading) {
+        section.style.display = "none";
+        return;
+      }
+
+      const grading = run.grading;
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("grades-arrow").classList.remove("open");
+
+      const summary = grading.summary || {};
+      const expectations = grading.expectations || [];
+
+      let html = '<div style="padding: 1rem;">';
+
+      // Summary line
+      const passRate = summary.pass_rate != null
+        ? Math.round(summary.pass_rate * 100) + "%"
+        : "?";
+      const badgeClass = summary.pass_rate >= 0.8 ? "grade-pass" : summary.pass_rate >= 0.5 ? "" : "grade-fail";
+      html += '<div class="grades-summary">';
+      html += '<span class="grade-badge ' + badgeClass + '">' + passRate + '</span>';
+      html += '<span>' + (summary.passed || 0) + ' passed, ' + (summary.failed || 0) + ' failed of ' + (summary.total || 0) + '</span>';
+      html += '</div>';
+
+      // Assertions list
+      html += '<ul class="assertion-list">';
+      for (const exp of expectations) {
+        const statusClass = exp.passed ? "pass" : "fail";
+        const statusIcon = exp.passed ? "\u2713" : "\u2717";
+        html += '<li class="assertion-item">';
+        html += '<span class="assertion-status ' + statusClass + '">' + statusIcon + '</span>';
+        html += '<span>' + escapeHtml(exp.text) + '</span>';
+        if (exp.evidence) {
+          html += '<div class="assertion-evidence">' + escapeHtml(exp.evidence) + '</div>';
+        }
+        html += '</li>';
+      }
+      html += '</ul>';
+
+      html += '</div>';
+      content.innerHTML = html;
+    }
+
+    function toggleGrades() {
+      const content = document.getElementById("grades-content");
+      const arrow = document.getElementById("grades-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Previous outputs (collapsible) ----
+    function renderPrevOutputs(run) {
+      const section = document.getElementById("prev-outputs-section");
+      const content = document.getElementById("prev-outputs-content");
+      const prevOutputs = (EMBEDDED_DATA.previous_outputs || {})[run.id];
+
+      if (!prevOutputs || prevOutputs.length === 0) {
+        section.style.display = "none";
+        return;
+      }
+
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("prev-outputs-arrow").classList.remove("open");
+
+      // Render the files into the content area
+      content.innerHTML = "";
+      const wrapper = document.createElement("div");
+      wrapper.style.padding = "1rem";
+
+      for (const file of prevOutputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const fc = document.createElement("div");
+        fc.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          fc.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          fc.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          fc.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(fc, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          fc.appendChild(a);
+        }
+
+        fileDiv.appendChild(fc);
+        wrapper.appendChild(fileDiv);
+      }
+
+      content.appendChild(wrapper);
+    }
+
+    function togglePrevOutputs() {
+      const content = document.getElementById("prev-outputs-content");
+      const arrow = document.getElementById("prev-outputs-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Feedback (saved to server -> feedback.json) ----
+    function saveCurrentFeedback() {
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // Build reviews array from map
+      const reviews = [];
+      for (const [run_id, feedback] of Object.entries(feedbackMap)) {
+        if (feedback.trim()) {
+          reviews.push({ run_id, feedback, timestamp: new Date().toISOString() });
+        }
+      }
+
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviews, status: "in_progress" }),
+      }).then(() => {
+        document.getElementById("feedback-status").textContent = "Saved";
+      }).catch(() => {
+        // Static mode or server unavailable — no-op on auto-save,
+        // feedback will be downloaded on final submit
+        document.getElementById("feedback-status").textContent = "Will download on submit";
+      });
+    }
+
+    // ---- Done ----
+    function showDoneDialog() {
+      // Save current textarea to feedbackMap (but don't POST yet)
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // POST once with status: complete — include ALL runs so the model
+      // can distinguish "no feedback" (looks good) from "not reviewed"
+      const reviews = [];
+      const ts = new Date().toISOString();
+      for (const r of EMBEDDED_DATA.runs) {
+        reviews.push({ run_id: r.id, feedback: feedbackMap[r.id] || "", timestamp: ts });
+      }
+      const payload = JSON.stringify({ reviews, status: "complete" }, null, 2);
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+      }).then(() => {
+        document.getElementById("done-overlay").classList.add("visible");
+      }).catch(() => {
+        // Server not available (static mode) — download as file
+        const blob = new Blob([payload], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "feedback.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        document.getElementById("done-overlay").classList.add("visible");
+      });
+    }
+
+    function closeDoneDialog() {
+      // Reset status back to in_progress
+      saveCurrentFeedback();
+      document.getElementById("done-overlay").classList.remove("visible");
+    }
+
+    // ---- Toast ----
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("visible");
+      setTimeout(() => toast.classList.remove("visible"), 2000);
+    }
+
+    // ---- Keyboard nav ----
+    document.addEventListener("keydown", (e) => {
+      // Don't capture when typing in textarea
+      if (e.target.tagName === "TEXTAREA") return;
+
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        navigate(-1);
+      } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        navigate(1);
+      }
+    });
+
+    // ---- Util ----
+    function getDownloadUri(file) {
+      if (file.data_uri) return file.data_uri;
+      if (file.data_b64) return "data:application/octet-stream;base64," + file.data_b64;
+      if (file.type === "text") return "data:text/plain;charset=utf-8," + encodeURIComponent(file.content);
+      return "#";
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ---- View switching ----
+    function switchView(view) {
+      document.querySelectorAll(".view-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
+      document.querySelector(`[onclick="switchView('${view}')"]`).classList.add("active");
+      document.getElementById("panel-" + view).classList.add("active");
+    }
+
+    // ---- Benchmark rendering ----
+    function renderBenchmark() {
+      const data = EMBEDDED_DATA.benchmark;
+      if (!data) return;
+
+      // Show the tabs
+      document.getElementById("view-tabs").style.display = "flex";
+
+      const container = document.getElementById("benchmark-content");
+      const summary = data.run_summary || {};
+      const metadata = data.metadata || {};
+      const notes = data.notes || [];
+
+      let html = "";
+
+      // Header
+      html += "<h2 style='font-family: Poppins, sans-serif; margin-bottom: 0.5rem;'>Benchmark Results</h2>";
+      html += "<p style='color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.25rem;'>";
+      if (metadata.skill_name) html += "<strong>" + escapeHtml(metadata.skill_name) + "</strong> &mdash; ";
+      if (metadata.timestamp) html += metadata.timestamp + " &mdash; ";
+      if (metadata.evals_run) html += "Evals: " + metadata.evals_run.join(", ") + " &mdash; ";
+      html += (metadata.runs_per_configuration || "?") + " runs per configuration";
+      html += "</p>";
+
+      // Summary table
+      html += '<table class="benchmark-table">';
+
+      function fmtStat(stat, pct) {
+        if (!stat) return "—";
+        const suffix = pct ? "%" : "";
+        const m = pct ? (stat.mean * 100).toFixed(0) : stat.mean.toFixed(1);
+        const s = pct ? (stat.stddev * 100).toFixed(0) : stat.stddev.toFixed(1);
+        return m + suffix + " ± " + s + suffix;
+      }
+
+      function deltaClass(val) {
+        if (!val) return "";
+        const n = parseFloat(val);
+        if (n > 0) return "benchmark-delta-positive";
+        if (n < 0) return "benchmark-delta-negative";
+        return "";
+      }
+
+      // Discover config names dynamically (everything except "delta")
+      const configs = Object.keys(summary).filter(k => k !== "delta");
+      const configA = configs[0] || "config_a";
+      const configB = configs[1] || "config_b";
+      const labelA = configA.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const labelB = configB.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const a = summary[configA] || {};
+      const b = summary[configB] || {};
+      const delta = summary.delta || {};
+
+      html += "<thead><tr><th>Metric</th><th>" + escapeHtml(labelA) + "</th><th>" + escapeHtml(labelB) + "</th><th>Delta</th></tr></thead>";
+      html += "<tbody>";
+
+      html += "<tr><td><strong>Pass Rate</strong></td>";
+      html += "<td>" + fmtStat(a.pass_rate, true) + "</td>";
+      html += "<td>" + fmtStat(b.pass_rate, true) + "</td>";
+      html += '<td class="' + deltaClass(delta.pass_rate) + '">' + (delta.pass_rate || "—") + "</td></tr>";
+
+      // Time (only show row if data exists)
+      if (a.time_seconds || b.time_seconds) {
+        html += "<tr><td><strong>Time (s)</strong></td>";
+        html += "<td>" + fmtStat(a.time_seconds, false) + "</td>";
+        html += "<td>" + fmtStat(b.time_seconds, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.time_seconds) + '">' + (delta.time_seconds ? delta.time_seconds + "s" : "—") + "</td></tr>";
+      }
+
+      // Tokens (only show row if data exists)
+      if (a.tokens || b.tokens) {
+        html += "<tr><td><strong>Tokens</strong></td>";
+        html += "<td>" + fmtStat(a.tokens, false) + "</td>";
+        html += "<td>" + fmtStat(b.tokens, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.tokens) + '">' + (delta.tokens || "—") + "</td></tr>";
+      }
+
+      html += "</tbody></table>";
+
+      // Per-eval breakdown (if runs data available)
+      const runs = data.runs || [];
+      if (runs.length > 0) {
+        const evalIds = [...new Set(runs.map(r => r.eval_id))].sort((a, b) => a - b);
+
+        html += "<h3 style='font-family: Poppins, sans-serif; margin-bottom: 0.75rem;'>Per-Eval Breakdown</h3>";
+
+        const hasTime = runs.some(r => r.result && r.result.time_seconds != null);
+        const hasErrors = runs.some(r => r.result && r.result.errors > 0);
+
+        for (const evalId of evalIds) {
+          const evalRuns = runs.filter(r => r.eval_id === evalId);
+          const evalName = evalRuns[0] && evalRuns[0].eval_name ? evalRuns[0].eval_name : "Eval " + evalId;
+
+          html += "<h4 style='font-family: Poppins, sans-serif; margin: 1rem 0 0.5rem; color: var(--text);'>" + escapeHtml(evalName) + "</h4>";
+          html += '<table class="benchmark-table">';
+          html += "<thead><tr><th>Config</th><th>Run</th><th>Pass Rate</th>";
+          if (hasTime) html += "<th>Time (s)</th>";
+          if (hasErrors) html += "<th>Crashes During Execution</th>";
+          html += "</tr></thead>";
+          html += "<tbody>";
+
+          // Group by config and render with average rows
+          const configGroups = [...new Set(evalRuns.map(r => r.configuration))];
+          for (let ci = 0; ci < configGroups.length; ci++) {
+            const config = configGroups[ci];
+            const configRuns = evalRuns.filter(r => r.configuration === config);
+            if (configRuns.length === 0) continue;
+
+            const rowClass = ci === 0 ? "benchmark-row-with" : "benchmark-row-without";
+            const configLabel = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+            for (const run of configRuns) {
+              const r = run.result || {};
+              const prClass = r.pass_rate >= 0.8 ? "benchmark-delta-positive" : r.pass_rate < 0.5 ? "benchmark-delta-negative" : "";
+              html += '<tr class="' + rowClass + '">';
+              html += "<td>" + configLabel + "</td>";
+              html += "<td>" + run.run_number + "</td>";
+              html += '<td class="' + prClass + '">' + ((r.pass_rate || 0) * 100).toFixed(0) + "% (" + (r.passed || 0) + "/" + (r.total || 0) + ")</td>";
+              if (hasTime) html += "<td>" + (r.time_seconds != null ? r.time_seconds.toFixed(1) : "—") + "</td>";
+              if (hasErrors) html += "<td>" + (r.errors || 0) + "</td>";
+              html += "</tr>";
+            }
+
+            // Average row
+            const rates = configRuns.map(r => (r.result || {}).pass_rate || 0);
+            const avgRate = rates.reduce((a, b) => a + b, 0) / rates.length;
+            const avgPrClass = avgRate >= 0.8 ? "benchmark-delta-positive" : avgRate < 0.5 ? "benchmark-delta-negative" : "";
+            html += '<tr class="benchmark-row-avg ' + rowClass + '">';
+            html += "<td>" + configLabel + "</td>";
+            html += "<td>Avg</td>";
+            html += '<td class="' + avgPrClass + '">' + (avgRate * 100).toFixed(0) + "%</td>";
+            if (hasTime) {
+              const times = configRuns.map(r => (r.result || {}).time_seconds).filter(t => t != null);
+              html += "<td>" + (times.length ? (times.reduce((a, b) => a + b, 0) / times.length).toFixed(1) : "—") + "</td>";
+            }
+            if (hasErrors) html += "<td></td>";
+            html += "</tr>";
+          }
+          html += "</tbody></table>";
+
+          // Per-assertion detail for this eval
+          const runsWithExpectations = {};
+          for (const config of configGroups) {
+            runsWithExpectations[config] = evalRuns.filter(r => r.configuration === config && r.expectations && r.expectations.length > 0);
+          }
+          const hasAnyExpectations = Object.values(runsWithExpectations).some(runs => runs.length > 0);
+          if (hasAnyExpectations) {
+            // Collect all unique assertion texts across all configs
+            const allAssertions = [];
+            const seen = new Set();
+            for (const config of configGroups) {
+              for (const run of runsWithExpectations[config]) {
+                for (const exp of (run.expectations || [])) {
+                  if (!seen.has(exp.text)) {
+                    seen.add(exp.text);
+                    allAssertions.push(exp.text);
+                  }
+                }
+              }
+            }
+
+            html += '<table class="benchmark-table" style="margin-top: 0.5rem;">';
+            html += "<thead><tr><th>Assertion</th>";
+            for (const config of configGroups) {
+              const label = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+              html += "<th>" + escapeHtml(label) + "</th>";
+            }
+            html += "</tr></thead><tbody>";
+
+            for (const assertionText of allAssertions) {
+              html += "<tr><td>" + escapeHtml(assertionText) + "</td>";
+
+              for (const config of configGroups) {
+                html += "<td>";
+                for (const run of runsWithExpectations[config]) {
+                  const exp = (run.expectations || []).find(e => e.text === assertionText);
+                  if (exp) {
+                    const cls = exp.passed ? "benchmark-delta-positive" : "benchmark-delta-negative";
+                    const icon = exp.passed ? "\u2713" : "\u2717";
+                    html += '<span class="' + cls + '" title="Run ' + run.run_number + ': ' + escapeHtml(exp.evidence || "") + '">' + icon + "</span> ";
+                  } else {
+                    html += "— ";
+                  }
+                }
+                html += "</td>";
+              }
+              html += "</tr>";
+            }
+            html += "</tbody></table>";
+          }
+        }
+      }
+
+      // Notes
+      if (notes.length > 0) {
+        html += '<div class="benchmark-notes">';
+        html += "<h3>Analysis Notes</h3>";
+        html += "<ul>";
+        for (const note of notes) {
+          html += "<li>" + escapeHtml(note) + "</li>";
+        }
+        html += "</ul></div>";
+      }
+
+      container.innerHTML = html;
+    }
+
+    // ---- Start ----
+    init();
+    renderBenchmark();
+  </script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+/* ── Shell ── */
+.md-shell {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: 14px;
+  background: #f3f6fa;
+  min-height: 100%;
+}
+
+/* ── Header ── */
+.md-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  padding: 12px 20px;
+  border-bottom: 2px solid #e0e8f0;
+  box-shadow: 0 1px 4px rgba(0,0,0,.07);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.md-header-left { display: flex; align-items: center; gap: 12px; }
+.md-globe { width: 48px; height: 48px; flex-shrink: 0; }
+.md-title-main { font-size: 1.25rem; font-weight: 700; color: #1b4e8c; line-height: 1.2; }
+.md-title-sub  { font-size: .85rem; color: #6b7c93; }
+
+.md-stat-row { display: flex; gap: 20px; flex-wrap: wrap; }
+.md-stat { display: flex; flex-direction: column; align-items: center; min-width: 72px; }
+.md-stat-val { font-size: 1.4rem; font-weight: 700; color: #1b4e8c; line-height: 1.1; }
+.md-stat-lbl { font-size: .7rem; color: #6b7c93; text-transform: uppercase; letter-spacing: .5px; }
+
+/* ── Filters ── */
+.md-filters {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: #fff;
+  padding: 10px 20px 12px;
+  border-bottom: 1px solid #dde4ee;
+}
+.md-filter-item { display: flex; flex-direction: column; gap: 3px; }
+.md-filter-item label { font-size: .72rem; font-weight: 600; color: #3e3e3c; }
+.md-filter-item select,
+.md-filter-item input {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 5px 8px;
+  font-size: .82rem;
+  background: #fff;
+  height: 32px;
+  min-width: 160px;
+}
+
+/* ── Body ── */
+.md-body { display: flex; flex-direction: column; gap: 14px; padding: 14px 16px; }
+
+/* ── Section label ── */
+.md-section-lbl {
+  font-size: .72rem;
+  font-weight: 700;
+  color: #3e3e3c;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.md-filter-badge {
+  background: #1b6cb5;
+  color: #fff;
+  font-size: .65rem;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* ── Map ── */
+.md-map-wrap { border: 1px solid #ccd4e0; border-radius: 6px; overflow: hidden; background: #d6e8f5; position: relative; }
+.md-map { height: 320px; width: 100%; }
+.md-map-legend {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  z-index: 1000;
+  background: rgba(255,255,255,.88);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: .7rem;
+  color: #333;
+  border: 1px solid #ddd;
+}
+.leg-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 3px;
+  vertical-align: middle;
+}
+
+/* ── Table ── */
+.md-table-wrap {
+  max-height: 440px;
+  overflow-y: auto;
+  border: 1px solid #ccd4e0;
+  border-radius: 6px;
+  background: #fff;
+}
+table.md-tbl { width: 100%; border-collapse: collapse; font-size: .78rem; }
+.md-tbl thead th {
+  background: #f0f4fa;
+  color: #2c3e50;
+  font-weight: 700;
+  padding: 7px 10px;
+  text-align: left;
+  border-bottom: 2px solid #dde4ee;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.md-tbl thead th.num { text-align: right; }
+.md-tbl tbody tr:nth-child(even) { background: #f8fafd; }
+.md-tbl tbody tr:hover { background: #eaf2ff; }
+.md-tbl td { padding: 6px 10px; border-bottom: 1px solid #f0f0f0; color: #1a1a1a; vertical-align: middle; }
+.md-tbl td.num { text-align: right; color: #444; }
+.md-tbl td.name-cell a { color: #1b6cb5; text-decoration: none; font-weight: 600; }
+.md-tbl td.name-cell a:hover { text-decoration: underline; }
+
+/* ── Status badges ── */
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: .68rem; font-weight: 700; color: #fff; }
+.st-active    { background: #27ae60; }
+.st-home      { background: #f39c12; }
+.st-candidate { background: #2980b9; }
+.st-hold      { background: #95a5a6; }
+
+/* ── Loading / Error ── */
+.md-loading { padding: 40px; text-align: center; color: #6b7c93; font-size: 1rem; }
+.md-error { padding: 20px; margin: 14px 16px; background: #fdecea; border: 1px solid #f5c6cb; border-radius: 6px; color: #721c24; }

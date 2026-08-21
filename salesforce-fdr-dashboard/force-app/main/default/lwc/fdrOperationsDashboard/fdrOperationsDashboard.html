@@ -1,0 +1,197 @@
+<template>
+    <div class="fdr-dashboard">
+
+        <!-- ── Header ── -->
+        <div class="fdr-header">
+            <div class="fdr-header-left">
+                <svg class="fdr-cross-logo" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="24" y="0"  width="12" height="60" fill="#e05c14"/>
+                    <rect x="0"  y="24" width="60" height="12" fill="#e05c14"/>
+                </svg>
+                <div class="fdr-title-block">
+                    <div class="fdr-title-main">Foursquare Disaster Relief</div>
+                    <div class="fdr-title-sub">Operations Dashboard</div>
+                </div>
+            </div>
+            <div class="fdr-header-right">
+                <lightning-button
+                    label="CLICK HERE! Submit FDR Ops Form"
+                    variant="brand"
+                    class="fdr-submit-btn"
+                    onclick={openOpsForm}>
+                </lightning-button>
+            </div>
+        </div>
+
+        <!-- ── Filter Bar ── -->
+        <div class="fdr-filter-bar">
+            <div class="fdr-filter-group">
+                <lightning-combobox
+                    label="FMI Global Area"
+                    value={selectedGlobalArea}
+                    options={globalAreaOptions}
+                    onchange={handleGlobalAreaChange}
+                    variant="label-stacked"
+                    class="fdr-filter-combo">
+                </lightning-combobox>
+                <lightning-combobox
+                    label="FMI Region"
+                    value={selectedRegion}
+                    options={regionOptions}
+                    onchange={handleRegionChange}
+                    variant="label-stacked"
+                    class="fdr-filter-combo">
+                </lightning-combobox>
+            </div>
+            <div class="fdr-date-group">
+                <div class="fdr-date-label">Date</div>
+                <lightning-input
+                    type="date"
+                    label="From"
+                    value={startDate}
+                    onchange={handleStartDateChange}
+                    variant="label-stacked"
+                    class="fdr-date-input">
+                </lightning-input>
+                <span class="fdr-date-sep">–</span>
+                <lightning-input
+                    type="date"
+                    label="To"
+                    value={endDate}
+                    onchange={handleEndDateChange}
+                    variant="label-stacked"
+                    class="fdr-date-input">
+                </lightning-input>
+            </div>
+        </div>
+
+        <!-- ── Loading ── -->
+        <template if:true={isLoading}>
+            <div class="fdr-loading">
+                <lightning-spinner alternative-text="Loading dashboard data" size="medium"></lightning-spinner>
+                <p class="fdr-loading-text">Loading dashboard data…</p>
+            </div>
+        </template>
+
+        <!-- ── Error ── -->
+        <template if:true={hasError}>
+            <div class="fdr-error-banner" role="alert">
+                <lightning-icon icon-name="utility:error" size="small" class="slds-m-right_x-small"></lightning-icon>
+                {error}
+            </div>
+        </template>
+
+        <!-- ── Main Grid ── -->
+        <template if:true={hasData}>
+            <div class="fdr-main-grid">
+
+                <!-- LEFT COLUMN: Map + Table -->
+                <div class="fdr-col-left">
+
+                    <!-- Country map -->
+                    <div class="fdr-section-header">Country</div>
+                    <div class="fdr-map-wrapper">
+                        <div class="fdr-leaflet-map" lwc:dom="manual"></div>
+                        <div class="fdr-map-attribution">Esri, FAO, NOAA, USGS</div>
+                    </div>
+
+                    <!-- Response table -->
+                    <div class="fdr-table-wrapper">
+                        <table class="fdr-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Response</th>
+                                    <th>Country</th>
+                                    <th>FMI Region</th>
+                                    <th>Disaster Type</th>
+                                    <th>Lvl</th>
+                                    <th>Response Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={responseRows} for:item="row">
+                                    <tr key={row.Id}>
+                                        <td>{row.formattedDate}</td>
+                                        <td>{row.Response_Name__c}</td>
+                                        <td>{row.Country__c}</td>
+                                        <td>{row.FMI_Region__c}</td>
+                                        <td>{row.Disaster_Type__c}</td>
+                                        <td><span class={row.levelClass}>{row.Level__c}</span></td>
+                                        <td><span class={row.statusClass}>{row.Response_Status__c}</span></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="7" class="fdr-table-total">Total: {totalResponses} responses</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: Summary + Charts + KPIs -->
+                <div class="fdr-col-right">
+
+                    <!-- Response Summary -->
+                    <div class="fdr-card">
+                        <div class="fdr-card-title">Response Summary</div>
+                        <div class="fdr-summary-grid">
+                            <div class="fdr-summary-row">
+                                <span class="fdr-summary-label fdr-label-active">Active</span>
+                                <span class="fdr-summary-count">{activeResponses}</span>
+                            </div>
+                            <div class="fdr-summary-row">
+                                <span class="fdr-summary-label fdr-label-planning">Planning</span>
+                                <span class="fdr-summary-count">{planningResponses}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Responses by Disaster Type (pie) -->
+                    <div class="fdr-card fdr-card-chart">
+                        <div class="fdr-card-title">Responses by Disaster Type</div>
+                        <div class="fdr-pie-wrapper">
+                            <canvas class="fdr-pie-canvas"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- KPI Cards (2 × 3) -->
+                    <div class="fdr-kpi-grid">
+                        <div class="fdr-kpi-card">
+                            <div class="fdr-kpi-number fdr-kpi-orange">{totalResponses}</div>
+                            <div class="fdr-kpi-label">Responses</div>
+                        </div>
+                        <div class="fdr-kpi-card">
+                            <div class="fdr-kpi-number fdr-kpi-red">{countriesServed}</div>
+                            <div class="fdr-kpi-label">Countries Served</div>
+                        </div>
+                        <div class="fdr-kpi-card">
+                            <div class="fdr-kpi-number fdr-kpi-red">{usDomesticResponses}</div>
+                            <div class="fdr-kpi-label">US Domestic Responses</div>
+                        </div>
+                        <div class="fdr-kpi-card">
+                            <div class="fdr-kpi-number fdr-kpi-red">{grantsDispersed}</div>
+                            <div class="fdr-kpi-label">Grants Dispersed</div>
+                        </div>
+                        <div class="fdr-kpi-card fdr-kpi-wide">
+                            <div class="fdr-kpi-number fdr-kpi-red">{grantFundsFormatted}</div>
+                            <div class="fdr-kpi-label">Grant Funds Provided</div>
+                        </div>
+                    </div>
+
+                    <!-- Responses by Month (bar) -->
+                    <div class="fdr-card fdr-card-chart">
+                        <div class="fdr-card-title">Responses by Month</div>
+                        <div class="fdr-bar-wrapper">
+                            <canvas class="fdr-bar-canvas"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </template>
+
+    </div>
+</template>
