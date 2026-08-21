@@ -1,0 +1,23 @@
+{
+  "skill_name": "brand-audit",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Can you audit our brand? Here's our website: https://fmi.org — I feel like our messaging isn't landing but I can't pinpoint why. Our emails get decent open rates but almost nobody clicks through to give.",
+      "expected_output": "A full scored audit across all 8 dimensions using fmi.org as the primary input. Should identify specific copy from the homepage, name the hook and CTA weaknesses, score psychological levers, and produce a ranked fix list. The low click-through problem should be diagnosed specifically.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "prompt": "Run a brand audit on us. We're a small missions nonprofit, about 15 years old. We raise money for church planters in Southeast Asia. Our donors are mostly older (55+) church members. We don't have a website link but here are two recent email subject lines we used: 'July Prayer Update' and 'Thank you for your partnership.' Our giving page just has a PayPal button.",
+      "expected_output": "Audit that works from partial inputs. Should score what it can, mark insufficient-data dimensions clearly, and still produce a useful diagnosis. The subject lines and PayPal button alone should generate strong specific findings on hook strength and CTA. Should surface the audience-aging blind spot and the email-as-sole-channel gap.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "/brand-audit — we're trying to reach younger donors (25-40) but nothing is working. We post on Instagram 3x a week, we send a monthly newsletter, and we have a giving page. Can you tell us what we're doing wrong?",
+      "expected_output": "Audit focused on the audience-precision and channel-coverage dimensions but covering all 8. Should probe the mismatch between a monthly newsletter cadence and a 25-40 audience. Should assess whether Instagram content is discovery-optimized or just repurposed newsletter content. Fix list should prioritize the channel and audience dimensions first since that's what the user named.",
+      "files": []
+    }
+  ]
+}
