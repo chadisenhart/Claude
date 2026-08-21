@@ -1,0 +1,6 @@
+{
+  "eval_id": 0,
+  "eval_name": "full-audit-from-url",
+  "prompt": "Can you audit our brand? Here's our website: https://foursquaremissions.com — I feel like our messaging isn't landing but I can't pinpoint why. Our emails get decent open rates but almost nobody clicks through to give.",
+  "assertions": []
+}

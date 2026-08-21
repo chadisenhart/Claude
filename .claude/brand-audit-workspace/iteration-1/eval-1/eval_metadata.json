@@ -1,0 +1,6 @@
+{
+  "eval_id": 1,
+  "eval_name": "partial-audit-email-only",
+  "prompt": "Run a brand audit on us. We're a small missions nonprofit, about 15 years old. We raise money for church planters in Southeast Asia. Our donors are mostly older (55+) church members. We don't have a website link but here are two recent email subject lines we used: 'July Prayer Update' and 'Thank you for your partnership.' Our giving page just has a PayPal button.",
+  "assertions": []
+}
